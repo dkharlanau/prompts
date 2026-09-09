@@ -1,97 +1,148 @@
 # Prompts
 
-A deliberately small library for **deep autonomous AI runs** on real products, services, websites, repositories and systems.
+A deliberately small library of **three canonical agent workflows** for building and improving real products and repositories.
 
-The repository has one canonical prompt:
-
-## [Deep Run](loops/deep-run.md)
-
-`inspect → baseline → independent perspectives → bottleneck → alternatives → red team → experiment gate → execute → verify → independent evaluation → entropy check → learn → repeat`
-
-Deep Run intentionally absorbs the useful parts of self-interview/council, Best-of-N, adversarial review, experimentation, evaluator-optimizer and repository gardening. Those are phases of one strong loop, not separate prompt variants.
-
-## When to use it
-
-Use Deep Run when the task deserves substantial reasoning and a complete pass rather than a quick answer:
-
-- improve a product or service;
-- find the next high-leverage milestone;
-- improve discovery, acquisition, activation or retention;
-- deeply audit and improve a website;
-- solve a difficult repository/software problem;
-- reconsider architecture or product direction;
-- research a problem and turn findings into verified changes;
-- review a mature project for simplification, regressions and new opportunities.
-
-Do **not** force Deep Run onto a small deterministic edit or simple factual question.
-
-## Where to use it
-
-- **ChatGPT Work / Codex** — preferred for long repository-level execution with files, code, tools and tests.
-- **ChatGPT with GitHub/web tools** — strong for product/repository audits, research, GitHub changes and scoped implementation.
-- **API/custom harness** — use the same canonical prompt; configure the model/effort separately rather than cloning the prompt.
-
-See [MODEL_PROFILES.md](MODEL_PROFILES.md) for current model and reasoning recommendations.
-
-## Current model guidance
-
-| Configuration | Recommended use |
-|---|---|
-| **GPT-6 Astra — Medium** | Preferred starting point for hardest end-to-end Deep Runs |
-| **GPT-6 Astra — High** | Very difficult/ambiguous/consequential multi-domain run |
-| **GPT-5.6 Sol — High** | Default full Deep Run workhorse |
-| **GPT-5.6 Sol — Extra High** | Especially difficult one-off run when available |
-| **GPT-5.6 Luna — Think** | Bounded sub-work/pre-scan; not preferred as sole final judge when stronger models exist |
-
-As of 2026-09-09, official OpenAI sources checked for this repository do not list a model called `Solana`; see `MODEL_PROFILES.md` for handling that name.
-
-## How to invoke
-
-Minimal invocation:
+The library covers the full lifecycle without prompt proliferation:
 
 ```text
-Use the canonical Deep Run from dkharlanau/prompts.
-Project: <project/repository>.
-Outcome: <real outcome>.
-Constraints: <important constraints>.
-Authority: <what may be changed>.
-Run it to completion and verify the resulting state.
+UNDERSTAND / IMPROVE
+Deep Run
+    ↓
+PLAN / CONTROL
+Backlog Builder
+    ↓
+BUILD / VERIFY
+Backlog Executor
+    ↺
+new evidence, defects and blockers feed the backlog
 ```
 
-If the agent already has project context, do not duplicate it. The prompt explicitly tells the agent to inspect the real sources of truth.
+These prompts are complementary, not variants of one another.
 
-Example:
+## 1. Deep Run
+
+[`loops/deep-run.md`](loops/deep-run.md)
+
+Use when the main question is:
+
+> What should materially improve in this product/project, and can the agent carry the best improvement through evidence, implementation and verification?
+
+Core pattern:
+
+`inspect → baseline → independent perspectives → bottleneck → alternatives → red team → experiment gate → execute → verify → independent evaluation → learn → repeat`
+
+Best for:
+- product/website/repository improvement;
+- difficult strategy or architecture work;
+- discovery/growth/value audits;
+- research that should turn into verified changes;
+- periodic deep reconsideration of a mature project.
+
+Avoid for small deterministic edits.
+
+## 2. Backlog Builder
+
+[`loops/backlog-builder.md`](loops/backlog-builder.md)
+
+Use when the main question is:
+
+> What work should exist in GitHub, in what order, with enough context and verification criteria for an autonomous agent to execute it well?
+
+Core pattern:
+
+`inspect reality → clean backlog → find gaps → challenge candidates → prioritize → write executable issues → adversarial review → repeat`
+
+Best for:
+- filling or refreshing a GitHub backlog;
+- converting research/product audits into issues;
+- merging duplicates and closing stale/obsolete tasks;
+- defining dependencies, acceptance criteria and verification;
+- preparing a repository for long autonomous execution.
+
+The backlog is treated as a **control plane**, not an idea dump.
+
+## 3. Backlog Executor
+
+[`loops/backlog-executor.md`](loops/backlog-executor.md)
+
+Use when the backlog already exists and the goal is:
+
+> Keep implementing the highest-value actionable work autonomously until no justified executable backlog remains.
+
+Core pattern:
+
+`sync → triage → select → implement → tests → product/UI verification → independent review → update issues → regression checkpoint → continue`
+
+Best for:
+- Codex or another coding/product agent with repository access;
+- long autonomous implementation sessions;
+- working through many GitHub issues without stopping after one task;
+- user-facing work where UI must be inspected after implementation;
+- sessions that should continue past blocked issues and periodically check regressions.
+
+Do not use it against a low-quality backlog; run Backlog Builder first.
+
+## Which prompt should I use?
+
+| Situation | Prompt |
+|---|---|
+| "Think deeply and improve this project" | **Deep Run** |
+| "Audit/fill/review/prioritize our GitHub backlog" | **Backlog Builder** |
+| "Take the backlog and keep building until actionable work is exhausted" | **Backlog Executor** |
+| Backlog is messy, then needs implementation | **Backlog Builder → Backlog Executor** |
+| Product direction is uncertain before backlog work | **Deep Run → Backlog Builder → Backlog Executor** |
+
+Do not automatically run all three. Start at the stage where the real uncertainty or bottleneck exists.
+
+## Model guidance
+
+See [`MODEL_PROFILES.md`](MODEL_PROFILES.md). Model selection and reasoning effort are configuration, not reasons to duplicate prompt files.
+
+Current high-level guidance:
+
+| Workflow | Strong default |
+|---|---|
+| Deep Run | **GPT-6 Astra Medium/High** for hardest end-to-end work; **GPT-5.6 Sol High** as strong workhorse |
+| Backlog Builder | **GPT-5.6 Sol High** or **GPT-6 Astra Medium** when broad product/research context must be synthesized |
+| Backlog Executor | **Codex/Work with GPT-6 Astra** for hardest long autonomous runs; **GPT-5.6 Sol High** for normal repository execution |
+| External coding agents | Use the same Backlog Executor; benchmark the exact model/settings before adding recommendations |
+
+## Minimal invocation examples
 
 ```text
-Use Prompts/Deep Run on Ptichi.
-Outcome: materially improve qualified organic discovery and first user value.
-Authority: inspect and modify the current development branch, create/update issues, run checks; do not deploy.
+Use Prompts/Deep Run on <project>.
+Outcome: <real outcome>.
+Authority: <what may be changed>.
+Run through implementation and verification.
+```
+
+```text
+Use Prompts/Backlog Builder on <project>.
+Goal: <project outcome>.
+Review and update the actual GitHub backlog directly.
+```
+
+```text
+Use Prompts/Backlog Executor on <project>.
+Goal: <project outcome>.
+Work from the current GitHub backlog and continue autonomously until no justified actionable work remains.
+Do not deploy unless explicitly authorized.
 ```
 
 ## Repository contract
 
-This repository is intentionally resistant to prompt proliferation.
+The target size is **three canonical prompts**.
 
-Do not add a new prompt because the domain changed. Improve `deep-run.md` when a generally useful failure pattern is discovered. Add a model-specific adapter only when benchmark evidence shows that the same canonical prompt needs different execution guidance for that model.
+Do not add a new file because a new domain, role, feature type or model appears. Improve one of these three when a reusable failure mode is discovered. Add a fourth workflow only if repeated benchmark evidence shows that the job cannot be expressed cleanly as Deep Run, Backlog Builder or Backlog Executor.
 
 Files:
+- `loops/deep-run.md` — deep product/project improvement loop;
+- `loops/backlog-builder.md` — backlog creation, cleanup and prioritization loop;
+- `loops/backlog-executor.md` — long autonomous implementation loop;
+- `MODEL_PROFILES.md` — model/effort guidance and adapters;
+- `BENCHMARKS.md` — evaluation protocols;
+- `RESEARCH.md` — research basis;
+- `catalog.yaml` — machine-readable metadata;
+- `AGENTS.md` — routing and execution rules.
 
-- `loops/deep-run.md` — canonical reusable prompt.
-- `MODEL_PROFILES.md` — model selection, reasoning effort, adapters and model-refresh policy.
-- `BENCHMARKS.md` — Deep Run quality and model×effort evaluation protocol.
-- `RESEARCH.md` — research/evidence basis.
-- `catalog.yaml` — machine-readable metadata.
-- `AGENTS.md` — instructions for agents using this repository.
-
-## Template variables
-
-- `{{PROJECT}}`
-- `{{OUTCOME}}`
-- `{{TARGET}}`
-- `{{CONTEXT}}`
-- `{{CONSTRAINTS}}`
-- `{{AUTHORITY}}`
-- `{{SUCCESS_EVIDENCE}}`
-- `{{STOP_CONDITION}}`
-
-The default principle is: **one strong loop, real evidence, real execution, independent re-evaluation, repeat only while marginal value remains high.**
+Default principle: **deep thinking when direction is uncertain; a clean backlog when work must be coordinated; relentless verified execution when the backlog is ready.**
