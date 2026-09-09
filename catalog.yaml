@@ -1,27 +1,25 @@
-library_version: 2.0.0
-canonical_workflows: [deep-run, backlog-builder, backlog-executor]
-benchmark: workflow-specific + DRS-100
-profile_version: 1.1.0
+library_version: 2.1.0
+canonical_workflows: [deep-run, backlog-executor]
+canonical_modes:
+  deep-run: [BACKLOG, EXECUTE]
+benchmark: workflow-and-mode-specific
+profile_version: 1.2.0
 model_profiles_last_verified: 2026-09-09
 
 prompts:
   - id: deep-run
     path: loops/deep-run.md
-    version: 1.0.0
+    version: 1.1.0
     status: candidate
-    job: understand and materially improve a project when direction or the dominant bottleneck is uncertain
-    use_when: substantial product, website, repository, research, architecture or strategy work benefits from inspect-decide-execute-verify iteration
-    avoid_when: small deterministic edit or the only need is backlog maintenance/execution
-    patterns: [reality-inspection, baseline, independent-perspectives, dominant-bottleneck, best-of-n, adversarial-review, experiment-gate, execution, verification, evaluator-optimizer, reflection]
-
-  - id: backlog-builder
-    path: loops/backlog-builder.md
-    version: 1.0.0
-    status: candidate
-    job: create and maintain a prioritized execution-ready GitHub control plane
-    use_when: research, product state, defects and ideas must become clean executable work
-    avoid_when: backlog is already current, prioritized and execution-ready
-    patterns: [backlog-audit, gap-analysis, evidence-gate, prioritization, dependency-shaping, issue-design, adversarial-review]
+    job: deeply understand a project and either produce an execution-ready backlog or immediately implement the highest-leverage justified work
+    modes:
+      BACKLOG:
+        use_when: deep reasoning should end in a cleaned, prioritized, execution-ready GitHub control plane for later execution
+        avoid_when: backlog is already strong and the only need is sustained implementation
+      EXECUTE:
+        use_when: substantial product, website, repository, research, architecture or strategy work should be carried through implementation and verification now
+        avoid_when: only backlog maintenance is desired or action is outside granted authority
+    patterns: [reality-inspection, baseline, independent-perspectives, dominant-bottleneck, best-of-n, adversarial-review, experiment-gate, backlog-control-plane, execution, verification, evaluator-optimizer, reflection]
 
   - id: backlog-executor
     path: loops/backlog-executor.md
@@ -33,20 +31,24 @@ prompts:
     patterns: [state-sync, issue-triage, dependency-aware-selection, implementation, tests, ui-verification, independent-review, regression-checkpoint, control-plane-sync, continuation]
 
 routing:
-  uncertain_direction: deep-run
-  backlog_creation_or_review: backlog-builder
+  uncertain_direction_and_immediate_action: deep-run:EXECUTE
+  backlog_creation_or_review: deep-run:BACKLOG
+  prepare_for_coding_agent: [deep-run:BACKLOG, backlog-executor]
   autonomous_implementation: backlog-executor
-  messy_backlog_then_build: [backlog-builder, backlog-executor]
-  full_project_cycle: [deep-run, backlog-builder, backlog-executor]
+  strong_backlog_already_exists: backlog-executor
 
 model_profiles:
-  hardest_end_to_end:
+  hardest_deep_execute:
     model: GPT-6 Astra
     reasoning: Medium
     escalate_to: High
-  normal_deep_or_backlog_reasoning:
+  normal_deep_execute:
     model: GPT-5.6 Sol
     reasoning: High
+  deep_backlog:
+    model: GPT-5.6 Sol
+    reasoning: High
+    alternative: GPT-6 Astra Medium for broad research/product synthesis
   hardest_autonomous_repository_execution:
     environment: Codex or Work
     model: GPT-6 Astra
@@ -58,11 +60,13 @@ model_profiles:
     reasoning: High
 
 external_models:
-  policy: use the same canonical workflow first; add model-specific guidance only after benchmarking the exact model/version/settings
+  policy: use Backlog Executor first; add model-specific guidance only after benchmarking the exact model/version/settings
 
 selection_policy:
-  - choose workflow by job, not by domain
-  - do not chain all workflows unless the project state requires it
+  - choose Deep Run mode by desired output, not by domain
+  - default ordinary Deep Run requests to EXECUTE
+  - route backlog fill/review/prioritization to Deep Run BACKLOG
+  - use Backlog Executor for sustained execution of an existing usable backlog
   - fill context from real sources of truth before asking the user
   - execute through verification when authorized
   - keep GitHub issue state synchronized with reality
