@@ -1,145 +1,66 @@
 # Prompts
 
-A deliberately small library of **two canonical agent workflows** for building and improving real products and repositories.
+Three commands for real development through ChatGPT or Codex. Two maintained templates, no collection of near-duplicates.
+
+| Command | Job | Durable result |
+|---|---|---|
+| **Deep Run BACKLOG** | Find what is worth doing | Clean, prioritized issues an executor can use without the original chat |
+| **Deep Run EXECUTE** | Find the best justified improvement and make it | Changed artifacts with verification and an honest completion status |
+| **Backlog Executor** | Work through an existing usable queue | Implemented, reviewed work; accurate issues; continued progress past unrelated blockers |
+
+## Everyday use
 
 ```text
-DEEP RUN
-  ├─ BACKLOG mode  → deeply analyze → create/clean/prioritize execution-ready work
-  └─ EXECUTE mode  → deeply analyze → implement → verify → repeat
-
-BACKLOG EXECUTOR
-  → consume the current actionable backlog autonomously until useful work is exhausted
-```
-
-The library intentionally avoids prompt proliferation.
-
-## 1. Deep Run
-
-[`loops/deep-run.md`](loops/deep-run.md)
-
-Deep Run is the reasoning workflow. It has two modes.
-
-### Deep Run — BACKLOG
-
-Use when the main question is:
-
-> What should materially improve in this project, and what should the actual GitHub backlog contain so an autonomous executor can do it well?
-
-Core pattern:
-
-`inspect → baseline → independent perspectives → bottleneck → alternatives → red team → experiment gate → audit backlog → map findings to work → prioritize → write executable issues → adversarial review`
-
-Best for:
-- filling or refreshing a GitHub backlog;
-- converting research/product audits into durable issues;
-- cleaning duplicates, stale work and already-completed tasks;
-- defining dependencies, acceptance criteria and verification;
-- preparing a repository for long autonomous execution.
-
-The backlog is a control plane, not an idea dump.
-
-### Deep Run — EXECUTE
-
-Use when the main question is:
-
-> What should materially improve in this product/project, and can the agent implement and verify the best improvement now?
-
-Core pattern:
-
-`inspect → baseline → independent perspectives → bottleneck → alternatives → red team → experiment gate → execute → verify → independent evaluation → entropy check → learn → repeat`
-
-Best for:
-- product/website/repository improvement;
-- difficult strategy or architecture work;
-- discovery/growth/value audits;
-- research that should turn directly into verified changes;
-- periodic deep reconsideration of a mature project.
-
-Default to EXECUTE for ordinary requests such as "run a deep loop" or "improve this project". Use BACKLOG when the user explicitly wants issues/backlog rather than immediate product changes.
-
-## 2. Backlog Executor
-
-[`loops/backlog-executor.md`](loops/backlog-executor.md)
-
-Use when the backlog already exists and the goal is:
-
-> Keep implementing the highest-value actionable work autonomously until no justified executable backlog remains.
-
-Core pattern:
-
-`sync → triage → select → implement → tests → product/UI verification → independent review → update issues → regression checkpoint → continue`
-
-Best for:
-- Codex, Work, Kimi or another coding/product agent with repository access;
-- long autonomous implementation sessions;
-- working through many GitHub issues without stopping after one task;
-- user-facing work where UI must be inspected after implementation;
-- sessions that should continue past blocked issues and periodically check regressions.
-
-Do not use it blindly against a poor backlog. Run Deep Run in BACKLOG mode first when backlog quality is uncertain.
-
-## Which workflow should I use?
-
-| Situation | Workflow |
-|---|---|
-| "Think deeply and improve this project now" | **Deep Run — EXECUTE** |
-| "Audit/fill/review/prioritize our GitHub backlog" | **Deep Run — BACKLOG** |
-| "Take the backlog and keep building until actionable work is exhausted" | **Backlog Executor** |
-| Backlog is messy, then needs long autonomous implementation | **Deep Run BACKLOG → Backlog Executor** |
-| Direction is uncertain but ChatGPT can safely implement | **Deep Run EXECUTE** |
-| Direction is uncertain and work should be handed to Codex/Kimi later | **Deep Run BACKLOG → Backlog Executor** |
-
-Do not mechanically chain both workflows. Start where the real uncertainty exists.
-
-## Model guidance
-
-See [`MODEL_PROFILES.md`](MODEL_PROFILES.md). Model selection and reasoning effort are configuration, not reasons to duplicate prompt files.
-
-Current high-level guidance:
-
-| Workflow | Strong default |
-|---|---|
-| Deep Run — EXECUTE | **GPT-6 Astra Medium/High** for hardest end-to-end work; **GPT-5.6 Sol High** as strong workhorse |
-| Deep Run — BACKLOG | **GPT-5.6 Sol High** or **GPT-6 Astra Medium** when broad product/research context must be synthesized |
-| Backlog Executor | **Codex/Work with GPT-6 Astra** for hardest long autonomous runs; **GPT-5.6 Sol High** for normal repository execution |
-| External coding agents | Use the same Backlog Executor; benchmark the exact model/version/settings before adding recommendations |
-
-## Minimal invocation examples
-
-```text
-Use Prompts/Deep Run on <project> in EXECUTE mode.
-Outcome: <real outcome>.
-Authority: <what may be changed>.
-Run through implementation and verification.
+Prompts Deep Run BACKLOG на Ptichi. Цель — organic discovery.
 ```
 
 ```text
-Use Prompts/Deep Run on <project> in BACKLOG mode.
-Outcome: <real project outcome>.
-Deeply inspect the project and update the actual GitHub backlog directly.
-Do not implement product changes.
+Prompts Deep Run EXECUTE на Ptichi. Astra High. Работай глубоко.
 ```
 
 ```text
-Use Prompts/Backlog Executor on <project>.
-Goal: <project outcome>.
-Work from the current GitHub backlog and continue autonomously until no justified actionable work remains.
-Do not deploy unless explicitly authorized.
+Prompts Backlog Executor на Ptichi. Codex. Разбирай весь actionable backlog.
 ```
 
-## Repository contract
+The assistant reads this repository, resolves the actual project, fills context and constraints, then executes. You do not need to fill six fields yourself. Existing no-push, branch and deployment restrictions remain in force. Specifying Codex/Astra requests an environment/configuration; text cannot switch the active model or start an unavailable agent.
 
-The target size is **two canonical prompts**.
+Use EXECUTE when direction is uncertain and changes are wanted now. Use BACKLOG when the output should be issues, not product edits. Use Executor when useful work is already defined. Do not chain workflows automatically or use a deep loop for a one-line deterministic fix.
 
-Do not add a new file because a new domain, role, feature type or model appears. Improve Deep Run or Backlog Executor when a reusable failure mode is discovered. Add a third workflow only if repeated benchmark evidence shows that the job cannot be expressed cleanly as one of the two Deep Run modes or Backlog Executor.
+## Templates
 
-Files:
-- `loops/deep-run.md` — deep reasoning with BACKLOG and EXECUTE modes;
-- `loops/backlog-executor.md` — long autonomous backlog implementation loop;
-- `MODEL_PROFILES.md` — model/effort guidance and adapters;
-- `BENCHMARKS.md` — evaluation protocols;
-- `RESEARCH.md` — research basis;
-- `catalog.yaml` — machine-readable metadata;
-- `AGENTS.md` — routing and execution rules.
+[Deep Run](loops/deep-run.md) and [Backlog Executor](loops/backlog-executor.md) are self-contained once filled. The agent entry point is [AGENTS.md](AGENTS.md).
 
-Default principle: **one deep reasoning loop with two outputs, plus one relentless verified executor for sustained backlog work.**
+The templates retain deep diagnosis, alternative hypotheses, skeptical review, experiments and iteration, but activate these only when they can affect the decision. They require real capability checks, preserve concurrent work and distinguish a branch fix from merged code, deployment and measured impact. A simulated user is not customer research; a green build is not proof of a useful product.
+
+For long work, the agent checkpoints repo/ref/SHA, constraints, issue state, verification and the next action. This supports a later resumed session; it is not background scheduling.
+
+## Optional local renderer
+
+Python 3.10+, standard library only. The agent supplies a UTF-8 JSON run specification with six non-empty string fields:
+
+```json
+{
+  "PROJECT": "owner/repository (verified target)",
+  "GOAL": "Fix the reproduced onboarding failure",
+  "CONTEXT": "Use the verified branch/ref and linked reproduction; inspect current tests",
+  "AUTHORITY": "Edit and test in the existing work branch; no push, merge or deploy",
+  "CONSTRAINTS": "Preserve existing work and public API behavior",
+  "DONE_WHEN": "The reproduction passes, relevant regressions are checked, and remaining gaps are reported"
+}
+```
+
+```sh
+python3 scripts/prompts.py render deep-execute --spec /tmp/run.json
+python3 scripts/prompts.py render deep-backlog --spec /tmp/run.json
+python3 scripts/prompts.py render backlog-executor --spec /tmp/run.json
+python3 scripts/prompts.py check
+python3 -m unittest discover -s tests -v
+```
+
+Use `--spec -` for standard input. Rendering writes only prompt text to standard output; it does not call a model, read your projects, write to GitHub or change permissions. The Deep Run renderer strips the unused mode. Unknown/missing fields and unresolved placeholders fail instead of silently producing an incomplete prompt. Do not commit private run specifications.
+
+## Evidence and upkeep
+
+[MODEL_PROFILES.md](MODEL_PROFILES.md) separates environment capabilities from model choices. [RESEARCH.md](RESEARCH.md) records source-to-design decisions. [BENCHMARKS.md](BENCHMARKS.md) defines real-run evaluation and adversarial cases.
+
+Both v2 templates are **experimental**, not "proven strongest": structural tests cannot establish a real-world win rate. The existing benchmark issue tracks those comparisons. Keep exactly three commands unless repeated evidence justifies a genuinely different job.

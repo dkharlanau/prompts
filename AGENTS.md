@@ -1,107 +1,27 @@
-# AGENTS.md
+# Agent entry point
 
-This repository provides exactly two canonical reusable workflows:
+This library has **three user commands, two canonical templates**. Do not create prompt copies by project, role or model.
 
-- `loops/deep-run.md`
-- `loops/backlog-executor.md`
+| User intent | Command | Template |
+|---|---|---|
+| Analyze, fill, clean or prioritize work | Deep Run BACKLOG | `loops/deep-run.md`, BACKLOG |
+| Diagnose and improve the project now | Deep Run EXECUTE | `loops/deep-run.md`, EXECUTE |
+| Implement the existing actionable queue | Backlog Executor | `loops/backlog-executor.md` |
 
-Deep Run has two modes:
-- `BACKLOG` — deep analysis whose output is a cleaned, prioritized, execution-ready backlog.
-- `EXECUTE` — deep analysis whose output is a changed and verified project state.
+Default ordinary "deep loop / improve" requests to EXECUTE; explicit backlog-only requests to BACKLOG. Do not restore a standalone Backlog Fill/Builder. Use BACKLOG then Executor only when a real handoff is needed. A small deterministic edit needs no full loop.
 
-## Core rule
+## When the user invokes Prompts
 
-Do not create domain-specific prompt variants. New domains, roles, products, websites, services or model names should normally use one of these two workflows with different inputs and evidence.
+1. Read the selected canonical template from the current repository, noting its version/ref. Read target-project instructions and inspect the actual target repository/issues. This library is not automatically loaded into every ChatGPT conversation. Use available connectors; do not pretend a remembered template is the current file.
+2. Resolve project aliases from evidence. Do not guess a repository from a brand name. Fill PROJECT, GOAL, CONTEXT, AUTHORITY, CONSTRAINTS and DONE_WHEN yourself from the request, trusted project context and live state. Include only context that changes the task: target user, source paths, baseline/ref, relevant issue scope and known blockers. Mark decision-changing unknowns; never invent measurements, issue IDs or test commands.
+3. Separate intended outcome from permission. Carry forward all applicable restrictions, including no-push and no-deploy. Specify allowed file/issue/branch operations and the completion boundary. If branch policy is absent, prefer isolated work; do not infer merge, release, spending or destructive-action permission. Account for preview deployments before remote writes.
+4. Produce a self-contained run prompt with no unresolved placeholders and only the selected mode. The optional renderer performs this mechanical step; it does not discover project context or grant permission. In ordinary chat, assemble the same text directly.
+5. When asked to run, act through the available tools, not merely return the prompt. When asked only to prepare a prompt, return the filled prompt without executing it. Proceed with safe independent work rather than repeatedly asking for routine details.
 
-A new prompt file is justified only when repeated benchmark evidence shows a fundamentally different job that cannot be expressed cleanly as Deep Run BACKLOG, Deep Run EXECUTE, or Backlog Executor.
+Consult [MODEL_PROFILES.md](MODEL_PROFILES.md) when selecting a runtime/model; do not prepend the entire library to every task. A model name in a prompt does not switch the current model or create Codex/subagents. Keep reports concise, factual and in the user's language.
 
-## Routing
+## Maintaining this repository
 
-Choose by the user's actual job.
+Run `python3 scripts/prompts.py check` and `python3 -m unittest discover -s tests -v` after changes. Keep links, catalog versions and input fields consistent. Keep both templates independently usable outside this checkout. Do not add generated run prompts containing private project context to this public repository.
 
-### Deep Run — EXECUTE
-Use when direction, diagnosis or the next highest-leverage improvement is uncertain and the agent should implement justified changes now.
-
-Typical shorthand:
-- `run a deep loop`
-- `improve this project`
-- `find the next milestone and do it`
-- `audit and improve`
-- `think from multiple roles and implement`
-
-Default ordinary Deep Run requests to EXECUTE unless backlog-only intent is clear.
-
-### Deep Run — BACKLOG
-Use when direction/diagnosis still requires deep reasoning, but the desired durable output is the GitHub backlog rather than immediate product implementation.
-
-Typical shorthand:
-- `fill the backlog`
-- `review our issues`
-- `add what is missing`
-- `prioritize the backlog`
-- `turn this research into GitHub work`
-- `prepare work for Codex/Kimi`
-
-The expected result is an updated control plane. Do not implement product changes unless the user explicitly extends authority.
-
-### Backlog Executor
-Use when a usable backlog exists and the user wants sustained implementation.
-
-Typical shorthand:
-- `work through the backlog`
-- `run autonomously`
-- `keep coding until the backlog is done`
-- `Codex loop`
-- `execute everything actionable`
-
-The executor must continue past independently blocked issues, verify changes, keep issues synchronized and stop only when meaningful actionable work is exhausted or outside authority.
-
-## Combination rules
-
-Do not chain workflows mechanically.
-
-Use:
-- `Deep Run BACKLOG → Backlog Executor` when analysis should prepare durable work for Codex/Kimi/another coding agent;
-- `Deep Run EXECUTE` alone when ChatGPT/Work has enough authority/tools to make the best changes immediately;
-- `Backlog Executor` alone when backlog quality and direction are already strong.
-
-During Deep Run EXECUTE, create/update issues only for durable follow-up work when useful; do not convert execution into backlog inflation.
-
-During Backlog Executor, create new issues only for genuine discovered defects, blockers or important follow-ups. Do not expand the backlog merely to prolong execution.
-
-## When asked to use this library
-
-1. Read the selected workflow and `MODEL_PROFILES.md`.
-2. Inspect the target project's real context before asking for missing inputs.
-3. Fill known placeholders from the repository, current conversation, issues, product, analytics, tests and other sources of truth.
-4. Infer routine/reversible details; ask only when a missing answer could materially change a consequential or irreversible outcome.
-5. Execute the workflow against the target project. Do not merely return prompt text unless the user asked for it.
-6. Respect branch, deployment, merge, publishing and other irreversible-action constraints.
-7. Preserve observable verification evidence.
-8. Do not claim completion from code changes alone when user/product behavior can be checked.
-
-## Model selection
-
-Use `MODEL_PROFILES.md` as the current source of truth.
-
-General defaults when available:
-
-- Deep Run EXECUTE: GPT-6 Astra Medium; High for unusually hard/ambiguous/consequential work. GPT-5.6 Sol High is a strong default workhorse.
-- Deep Run BACKLOG: GPT-5.6 Sol High for normal repository/product backlog reasoning; GPT-6 Astra Medium when the backlog depends on broad research, product synthesis or very large context.
-- Backlog Executor: prefer a coding-capable environment such as Codex/Work. GPT-6 Astra is preferred for the hardest long autonomous repository runs; GPT-5.6 Sol High is strong for normal execution.
-
-Do not assume maximum reasoning effort is always superior. Benchmark model × effort × workflow/mode.
-
-For external agents/models (for example Kimi or future coding agents), use Backlog Executor first. Add a profile only after the exact model/version and settings have been tested on comparable tasks.
-
-## Evaluation contract
-
-Use `BENCHMARKS.md` for prompt/model evaluation.
-
-Evaluate each job on its real outcome:
-
-- Deep Run EXECUTE: did the project measurably improve?
-- Deep Run BACKLOG: did backlog quality, prioritization and executability improve without issue inflation?
-- Backlog Executor: how much high-value backlog was correctly completed with verification, low regressions and accurate issue state?
-
-When a run exposes a reusable failure mode, improve the relevant canonical workflow, model guidance or benchmark. Do not add another prompt by default.
+For a reusable failure, improve the relevant template and add an evaluation case. Preserve conditional reasoning rather than fixed role/iteration quotas. Consult [BENCHMARKS.md](BENCHMARKS.md) for behavioral evidence; static checks do not prove agent performance. Promote versions only with recorded real-run results. The source rationale is in [RESEARCH.md](RESEARCH.md).

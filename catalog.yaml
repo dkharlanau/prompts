@@ -1,80 +1,29 @@
-library_version: 2.1.0
-canonical_workflows: [deep-run, backlog-executor]
-canonical_modes:
-  deep-run: [BACKLOG, EXECUTE]
-benchmark: workflow-and-mode-specific
-profile_version: 1.2.0
-model_profiles_last_verified: 2026-09-09
-
-prompts:
-  - id: deep-run
-    path: loops/deep-run.md
-    version: 1.1.0
-    status: candidate
-    job: deeply understand a project and either produce an execution-ready backlog or immediately implement the highest-leverage justified work
-    modes:
-      BACKLOG:
-        use_when: deep reasoning should end in a cleaned, prioritized, execution-ready GitHub control plane for later execution
-        avoid_when: backlog is already strong and the only need is sustained implementation
-      EXECUTE:
-        use_when: substantial product, website, repository, research, architecture or strategy work should be carried through implementation and verification now
-        avoid_when: only backlog maintenance is desired or action is outside granted authority
-    patterns: [reality-inspection, baseline, independent-perspectives, dominant-bottleneck, best-of-n, adversarial-review, experiment-gate, backlog-control-plane, execution, verification, evaluator-optimizer, reflection]
-
-  - id: backlog-executor
-    path: loops/backlog-executor.md
-    version: 1.0.0
-    status: candidate
-    job: autonomously execute actionable backlog with implementation, verification and issue synchronization
-    use_when: a usable backlog exists and a coding/product agent should keep working until no justified actionable work remains
-    avoid_when: backlog is low-quality, authority is unclear or work requires frequent irreversible human decisions
-    patterns: [state-sync, issue-triage, dependency-aware-selection, implementation, tests, ui-verification, independent-review, regression-checkpoint, control-plane-sync, continuation]
-
-routing:
-  uncertain_direction_and_immediate_action: deep-run:EXECUTE
-  backlog_creation_or_review: deep-run:BACKLOG
-  prepare_for_coding_agent: [deep-run:BACKLOG, backlog-executor]
-  autonomous_implementation: backlog-executor
-  strong_backlog_already_exists: backlog-executor
-
-model_profiles:
-  hardest_deep_execute:
-    model: GPT-6 Astra
-    reasoning: Medium
-    escalate_to: High
-  normal_deep_execute:
-    model: GPT-5.6 Sol
-    reasoning: High
-  deep_backlog:
-    model: GPT-5.6 Sol
-    reasoning: High
-    alternative: GPT-6 Astra Medium for broad research/product synthesis
-  hardest_autonomous_repository_execution:
-    environment: Codex or Work
-    model: GPT-6 Astra
-    reasoning: Medium
-    escalate_to: High
-  normal_autonomous_repository_execution:
-    environment: Codex or Work
-    model: GPT-5.6 Sol
-    reasoning: High
-
-external_models:
-  policy: use Backlog Executor first; add model-specific guidance only after benchmarking the exact model/version/settings
-
-selection_policy:
-  - choose Deep Run mode by desired output, not by domain
-  - default ordinary Deep Run requests to EXECUTE
-  - route backlog fill/review/prioritization to Deep Run BACKLOG
-  - use Backlog Executor for sustained execution of an existing usable backlog
-  - fill context from real sources of truth before asking the user
-  - execute through verification when authorized
-  - keep GitHub issue state synchronized with reality
-  - update model recommendations only after comparable benchmark runs
-
-refresh_triggers:
-  - new model or coding-agent release
-  - model rename or retirement
-  - material behavior or reasoning-control change
-  - materially new prompting guidance
-  - benchmark evidence contradicts current recommendation
+{
+  "library_version": "3.0.0",
+  "format_note": "JSON syntax is valid YAML; parsed with the Python standard library.",
+  "canonical_workflows": ["deep-run", "backlog-executor"],
+  "model_profiles": "MODEL_PROFILES.md",
+  "model_guidance_checked": "2026-09-09",
+  "fields": ["PROJECT", "GOAL", "CONTEXT", "AUTHORITY", "CONSTRAINTS", "DONE_WHEN"],
+  "commands": {
+    "deep-backlog": {"workflow": "deep-run", "mode": "BACKLOG"},
+    "deep-execute": {"workflow": "deep-run", "mode": "EXECUTE"},
+    "backlog-executor": {"workflow": "backlog-executor", "mode": null}
+  },
+  "prompts": [
+    {
+      "id": "deep-run",
+      "path": "loops/deep-run.md",
+      "version": "2.0.0",
+      "status": "experimental",
+      "max_template_words": 1100
+    },
+    {
+      "id": "backlog-executor",
+      "path": "loops/backlog-executor.md",
+      "version": "2.0.0",
+      "status": "experimental",
+      "max_template_words": 1000
+    }
+  ]
+}
