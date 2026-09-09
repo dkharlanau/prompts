@@ -1,0 +1,73 @@
+library_version: 0.1.0
+selection_policy: simplest_sufficient_loop
+benchmark: PLS-100
+prompts:
+  - id: autonomous-improvement
+    path: loops/autonomous-improvement.md
+    status: candidate
+    use_when: continuous improvement with authority to inspect, change and verify
+    avoid_when: small deterministic edit
+    patterns: [orchestrator-workers, evaluator-optimizer, reflection]
+    complements: [experiment, evaluator-optimizer, repository-gardening]
+
+  - id: council
+    path: loops/council.md
+    status: candidate
+    use_when: important ambiguous decision benefits from independent perspectives
+    avoid_when: evidence already supports a clear low-risk action
+    patterns: [parallelization, adversarial-synthesis]
+    complements: [best-of-n, experiment, adversarial-decision]
+
+  - id: best-of-n
+    path: loops/best-of-n.md
+    status: candidate
+    use_when: several fundamentally different solutions are plausible
+    avoid_when: narrow or deterministic solution space
+    patterns: [parallelization, tournament-evaluation]
+    complements: [adversarial-decision, experiment]
+
+  - id: adversarial-decision
+    path: loops/adversarial-decision.md
+    status: candidate
+    use_when: proposal is costly, consequential or at risk of feature inflation
+    avoid_when: trivial reversible change with strong evidence
+    patterns: [red-team, pre-mortem, evidence-gate]
+    complements: [experiment, best-of-n]
+
+  - id: evaluator-optimizer
+    path: loops/evaluator-optimizer.md
+    status: candidate
+    use_when: an existing artifact can be improved against explicit quality criteria
+    avoid_when: no meaningful rubric or feedback signal exists
+    patterns: [evaluator-optimizer, self-refinement]
+    complements: [autonomous-improvement]
+
+  - id: experiment
+    path: loops/experiment.md
+    status: candidate
+    use_when: a decision is blocked by uncertainty that can be reduced with observable evidence
+    avoid_when: existing evidence already resolves the uncertainty
+    patterns: [hypothesis-test-learn, reflection]
+    complements: [council, adversarial-decision, autonomous-improvement]
+
+  - id: discovery-to-value
+    path: loops/discovery-to-value.md
+    status: candidate
+    use_when: product or service must improve discovery, activation, first value or continuation
+    avoid_when: acquisition and activation are unrelated to the current goal
+    patterns: [journey-simulation, bottleneck-optimization, evaluator-optimizer]
+    complements: [experiment, evaluator-optimizer]
+
+  - id: repository-gardening
+    path: loops/repository-gardening.md
+    status: candidate
+    use_when: repository has accumulated duplication, stale knowledge or architectural drift
+    avoid_when: repository is fresh and low-entropy
+    patterns: [inspect-simplify-verify-repeat]
+    complements: [autonomous-improvement]
+
+composition_examples:
+  product_direction: [council, best-of-n, adversarial-decision, experiment]
+  continuous_product_work: [autonomous-improvement, evaluator-optimizer]
+  growth_and_activation: [discovery-to-value, experiment, evaluator-optimizer]
+  repository_health: [repository-gardening, autonomous-improvement]
