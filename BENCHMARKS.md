@@ -1,14 +1,12 @@
 # Workflow Benchmarks
 
-This repository evaluates three canonical workflows against the job each one is supposed to do.
-
-The goal is not to reward sophisticated-sounding reasoning. The benchmark asks whether the workflow improves a real project/control plane and whether autonomous execution actually completes verified work.
+This repository evaluates two canonical workflows and the two Deep Run modes against the job each is supposed to do.
 
 These are internal repository eval protocols, not external scientific benchmarks.
 
-# 1. DRS-100 — Deep Run Score
+# 1. DRS-100 — Deep Run EXECUTE Score
 
-Score each dimension 0–5 and apply the weight.
+Use for `deep-run.md` in `EXECUTE` mode.
 
 | Dimension | Weight | 5/5 means |
 |---|---:|---|
@@ -23,19 +21,19 @@ Score each dimension 0–5 and apply the weight.
 
 `DRS-100 = Σ (score / 5 × weight)`
 
-# 2. BQS-100 — Backlog Quality Score
+# 2. BQS-100 — Deep Run BACKLOG Quality Score
 
-Use for `backlog-builder.md`.
+Use for `deep-run.md` in `BACKLOG` mode.
 
 | Dimension | Weight | 5/5 means |
 |---|---:|---|
-| Outcome alignment | 20 | Top backlog work clearly contributes to the project goal rather than activity volume. |
+| Outcome alignment | 20 | Top backlog work clearly contributes to the project outcome rather than activity volume. |
 | Priority quality | 20 | High-leverage, dependency-unblocking work ranks above easy low-value work. |
 | Executability | 20 | READY issues contain enough context, scope, acceptance criteria and verification for an autonomous executor. |
 | Evidence & traceability | 15 | Important tasks are supported by observable project evidence; hypotheses/unknowns are explicit. |
 | Backlog hygiene | 10 | Duplicates, stale, obsolete and already-done issues are correctly merged/closed/reclassified. |
 | Dependency & queue design | 10 | Dependencies, blockers and a clear actionable queue are represented accurately. |
-| Inflation control | 5 | The builder resists speculative issue generation and keeps the backlog compact enough to guide execution. |
+| Inflation control | 5 | Deep Run resists speculative issue generation and keeps the backlog compact enough to guide execution. |
 
 `BQS-100 = Σ (score / 5 × weight)`
 
@@ -75,7 +73,7 @@ Useful secondary measures:
 
 # Status levels
 
-For each workflow separately:
+For each workflow/mode separately:
 
 - **experimental** — structure exists but has not passed representative real runs.
 - **candidate** — score ≥75 in at least two materially different real tasks with no critical failure.
@@ -85,8 +83,7 @@ A correct `NO CHANGE`, issue closure, rejection or BLOCKED classification can sc
 
 # Critical failures
 
-## Deep Run
-
+## Deep Run — EXECUTE
 Cannot be stable if it materially tends to:
 - stop at audit/plan when safe execution was authorized;
 - fabricate evidence or silently turn hypotheses into facts;
@@ -94,18 +91,17 @@ Cannot be stable if it materially tends to:
 - declare improvement without verifying changed state;
 - loop without meaningful state/evidence change.
 
-## Backlog Builder
-
+## Deep Run — BACKLOG
 Cannot be stable if it materially tends to:
 - create issue volume as a proxy for project progress;
 - duplicate existing work;
 - preserve obviously stale/obsolete work;
 - assign priority without evidence or dependencies;
 - produce READY issues whose outcome/acceptance/verification is too vague for autonomous execution;
-- convert every idea or unknown into an implementation task.
+- convert every idea or unknown into an implementation task;
+- perform product implementation despite backlog-only authority.
 
 ## Backlog Executor
-
 Cannot be stable if it materially tends to:
 - stop after one issue/batch while independent READY work remains;
 - mark issues done without satisfying acceptance criteria;
@@ -121,7 +117,7 @@ Cannot be stable if it materially tends to:
 For any workflow/model comparison:
 
 1. Freeze a meaningful baseline repository/product/backlog state.
-2. Define the workflow goal, constraints, authority and observable success evidence before the run.
+2. Define the workflow/mode goal, constraints, authority and observable success evidence before the run.
 3. Use the same workflow version and equivalent tool/permission context for compared configurations.
 4. Change only the model/reasoning/environment unless the experiment explicitly tests an adapter or tool difference.
 5. Run important configurations at least **3 times** when practical.
@@ -129,39 +125,42 @@ For any workflow/model comparison:
 7. Record project-native outcomes and critical failures in addition to the score.
 8. Prefer a configuration only when the advantage is repeatable and materially useful.
 
-# End-to-end lifecycle benchmark
+# End-to-end lifecycle benchmarks
 
-Periodically benchmark the full system, not only isolated prompts:
+Two main lifecycle paths are worth testing:
 
 ```text
-Deep Run → Backlog Builder → Backlog Executor
+Deep Run BACKLOG → Backlog Executor
+```
+
+and
+
+```text
+Deep Run EXECUTE
 ```
 
 Start from a real project state with imperfect direction/backlog.
 Measure:
-
-- whether Deep Run discovers a genuinely high-value direction;
-- whether Backlog Builder converts that evidence into a clean executable queue;
-- whether Backlog Executor completes the queue correctly and continues autonomously;
-- how much rework/clarification is needed between stages;
-- whether the final product state is materially better than the initial state;
+- whether Deep Run identifies genuinely high-value work;
+- whether BACKLOG mode preserves evidence and intent in executable issues;
+- whether Backlog Executor completes that queue correctly and continues autonomously;
+- how much rework/clarification is needed between BACKLOG and Executor;
+- whether EXECUTE mode can reach a better result without unnecessary handoff;
+- whether the final project state is materially better than the initial state;
 - whether issue count/complexity grew without proportional value.
 
-The ideal lifecycle has **low handoff loss**: evidence and intent survive the transition from discovery → backlog → execution.
+The ideal BACKLOG → Executor lifecycle has low handoff loss. The ideal EXECUTE lifecycle avoids creating backlog ceremony when direct action is more efficient.
 
 # Model × environment benchmark
 
 For autonomous work, benchmark:
 
-`workflow × model × reasoning effort × execution environment`
+`workflow × mode × model × reasoning effort × execution environment`
 
-Environment matters because repository access, shell/runtime, tests, browser/UI inspection, GitHub issue tools, branch isolation and persistence can materially affect outcomes.
-
-Current OpenAI configurations worth testing when available:
-
-- Deep Run — GPT-6 Astra Medium / High;
-- Deep Run — GPT-5.6 Sol High / Extra High;
-- Backlog Builder — GPT-5.6 Sol High vs GPT-6 Astra Medium;
+Current configurations worth testing when available:
+- Deep Run EXECUTE — GPT-6 Astra Medium / High;
+- Deep Run EXECUTE — GPT-5.6 Sol High / Extra High;
+- Deep Run BACKLOG — GPT-5.6 Sol High vs GPT-6 Astra Medium;
 - Backlog Executor — Codex/Work + GPT-6 Astra Medium/High;
 - Backlog Executor — Codex/Work + GPT-5.6 Sol High/Extra High.
 
@@ -170,7 +169,6 @@ External agents/models should use the same baseline tasks and workflow text befo
 # Representative real-project suite
 
 Maintain at least:
-
 1. **Product/growth** — e.g. discovery → first value → continuation in an existing product.
 2. **Website/service** — real user-facing site with search, UX and UI verification.
 3. **Software/repository** — non-trivial technical backlog with dependencies/tests.
@@ -180,7 +178,8 @@ Prefer projects with real history, constraints, existing issues and measurable a
 # Benchmark record
 
 ```yaml
-workflow_id: <deep-run|backlog-builder|backlog-executor>
+workflow_id: <deep-run|backlog-executor>
+mode: <BACKLOG|EXECUTE|null>
 workflow_version: <version>
 profile_version: <version>
 date: <yyyy-mm-dd>
