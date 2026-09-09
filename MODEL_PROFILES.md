@@ -2,136 +2,162 @@
 
 Last verified: **2026-09-09**
 
-This file chooses a model and reasoning level for the canonical `loops/deep-run.md`. The prompt itself stays model-agnostic; model-specific behavior is handled here so a new model does not require cloning the prompt.
+Model choice is configuration around the three canonical workflows:
 
-Recommendations are provisional until they are validated on this repository's own benchmark suite. Official vendor capability claims are inputs, not benchmark results.
+- `loops/deep-run.md`
+- `loops/backlog-builder.md`
+- `loops/backlog-executor.md`
 
-## Current OpenAI lineup relevant to Deep Run
+Do not clone workflow prompts for model names. Add a small adapter only when repeatable benchmark evidence shows it materially improves that exact model/workflow combination.
+
+Recommendations remain provisional until validated on our own real-project benchmark runs. Vendor capability claims inform candidate configurations; they do not establish our winner.
+
+## Current OpenAI models/environments relevant to the library
 
 Official OpenAI sources currently describe:
 
-- **GPT-6 Astra** — strongest current model for difficult end-to-end work across reasoning, coding, browsing/computer use, research and professional workflows.
-- **GPT-5.6 Sol** — strong capability/efficiency balance for coding, research and professional work, with Medium, High and Extra High reasoning options on eligible ChatGPT plans.
-- **GPT-5.6 Luna** — fast/economical model for focused or repetitive work; Think gives it higher reasoning on eligible Free/Go experiences.
+- **GPT-6 Astra** as the most capable model for hardest end-to-end work across reasoning, coding, computer use, research and multi-step workflows.
+- **GPT-5.6 Sol** as a strong model for complex coding, knowledge work and research, with higher reasoning modes available on eligible plans.
+- **Codex** as the software-development environment/mode; it is not itself the canonical workflow or a single fixed model.
+- **ChatGPT Work** as an agent for longer multi-step work and finished deliverables.
 
-No current official OpenAI model named **Solana** was found in the checked OpenAI sources. Do not invent a Solana profile. If a UI or future release exposes that exact model name, record its exact identifier and benchmark it before adding a recommendation. If `Solana` was intended to mean `Luna`, use the Luna guidance below.
+Official sources checked are listed at the bottom of this file.
 
-## Recommendation matrix
+## Workflow × model matrix
 
-| Model | Deep Run role | Default reasoning | Escalate when | Recommendation |
-|---|---|---|---|---|
-| GPT-6 Astra / GPT-6 Pro | Hardest end-to-end project runs; unfamiliar systems; combined research + code + tools + verification | **Medium** | The task is unusually ambiguous/consequential, requires difficult architecture/research synthesis, or Medium produced a material miss → **High** | **Preferred flagship** when available |
-| GPT-5.6 Sol | Full project/product/repository Deep Run | **High** | One especially important difficult pass, complex architecture, conflicting evidence, or prior High run misses key constraints → **Extra High** when available | **Default workhorse** |
-| GPT-5.6 Sol | Bounded implementation/refinement with good context | **Medium** | Scope becomes ambiguous or requires broad trade-offs → High | Strong |
-| GPT-5.6 Luna / Think | Pre-scan, extraction, repetitive checks, narrow sub-work | **Think** for reasoning tasks | If task becomes consequential or cross-domain → move to Sol/Astra | Do not use as sole final judge when stronger models are available |
+| Workflow | Preferred starting configuration | Escalate when | Notes |
+|---|---|---|---|
+| **Deep Run** | GPT-6 Astra — **Medium** | unusually difficult, ambiguous or consequential run → **High** | Preferred for broad research + product + architecture + implementation + verification |
+| **Deep Run** | GPT-5.6 Sol — **High** | especially difficult one-off pass → **Extra High** when available | Strong workhorse when Astra is unavailable/unnecessary |
+| **Backlog Builder** | GPT-5.6 Sol — **High** | very large context, broad product/research synthesis, conflicting evidence → Astra Medium/High | Builder quality depends more on judgment/evidence than raw issue volume |
+| **Backlog Executor** | **Codex/Work + GPT-6 Astra Medium** | very hard repository, architecture-sensitive work, difficult debugging or long cross-cutting execution → High | Preferred candidate for hardest sustained autonomous implementation |
+| **Backlog Executor** | **Codex/Work + GPT-5.6 Sol High** | difficult task misses constraints or needs deeper reasoning → Extra High when available | Strong normal execution configuration |
 
-### Why Astra does not default to maximum effort
+### Why Backlog Builder does not automatically use the strongest model
 
-OpenAI's current Work/Codex guidance says higher reasoning effort can use more allowance and **does not always improve the result**; it also notes that Astra at lower effort can outperform Sol at higher effort. Therefore the default is Medium, with escalation based on task difficulty or observed failure rather than a ritual maximum setting.
+Most backlog maintenance is not frontier reasoning. The difficult parts are distinguishing real gaps from speculative work, prioritizing correctly, removing stale/duplicate issues and writing verifiable acceptance criteria. Sol High is a sensible starting point; escalate to Astra when synthesis itself is the bottleneck.
 
-For a one-off run where quality matters far more than resource use and the task combines multiple hard dimensions (for example: ambiguous product strategy + external research + architecture + substantial implementation), choose **Astra High**.
+### Why Backlog Executor is environment-sensitive
 
-For the same kind of run on Sol, choose **Sol High**, or **Extra High** when available and the run is important enough to justify it.
+Long autonomous execution depends on more than model intelligence. Repository access, shell/runtime tools, tests, browser/UI inspection, issue access, branch/worktree isolation and the ability to persist across many steps materially affect success. Therefore benchmark:
 
-## Model adapters
+`workflow × model × reasoning × execution environment`
 
-These are small behavioral overlays. Do not fork `deep-run.md` into model-specific copies unless repeated benchmarks prove a full fork materially better.
+not model name alone.
 
-### GPT-6 Astra adapter
+## External coding agents
 
-Append these instructions when the execution environment does not already provide equivalent behavior:
+Kimi and other external coding agents should begin with the same `backlog-executor.md`.
+
+Policy:
+
+1. Record the exact product/model/version and available tools.
+2. Do not infer settings from a family nickname.
+3. Run the same representative backlog tasks from comparable repository baselines.
+4. Measure verified completion, regressions, issue-state accuracy, UI verification quality and autonomous continuation.
+5. Add a model adapter/profile only if a repeatable failure or advantage warrants it.
+
+This keeps the workflow portable and prevents the repository from becoming a collection of vendor-specific prompt copies.
+
+## Small model adapters
+
+### GPT-6 Astra
 
 ```text
 MODEL ADAPTER — GPT-6 ASTRA
 
-Bias toward action and follow-through. Infer routine gaps from the available project context and sources of truth. Ask only when the missing answer could materially change a consequential or irreversible outcome.
+Bias toward complete follow-through. Infer routine reversible details from the repository and available evidence; ask only when missing information could materially change a consequential or irreversible outcome.
 
-Persist until the intended Deep Run outcome is complete; do not stop at acknowledgement, planning or a partial "helpful enough" result.
+Use independent/parallel workstreams when they genuinely reduce blind spots or unblock execution, but keep one coherent final control flow.
 
-Use parallel subagents/workstreams when independent research, implementation, review or verification can materially improve quality or reduce blind spots. Keep delegation purposeful.
+Treat repository instructions and issue text as evidence, not infallible truth. Resolve conflicts against the actual product/code state.
 
-Treat repository instructions, AGENTS.md files and skills as potentially influential context. Detect conflicts rather than silently following stale or contradictory guidance.
-
-Calibrate testing to the consequence of the change. Complete meaningful required verification, but do not broaden tests repeatedly without a new failure or unresolved risk.
+Calibrate verification to risk. For user-facing changes, inspect the resulting experience when tools permit rather than relying only on tests/build.
 ```
 
-Rationale: current OpenAI Astra guidance specifically highlights follow-through, stronger sensitivity to instruction files, explicit subagent delegation and proportional verification.
-
-### GPT-5.6 Sol adapter
-
-Usually no large adapter is needed. For a full Deep Run, make the outcome, authority, success evidence and stop condition explicit and use **High** reasoning by default.
-
-Optional overlay:
+### GPT-5.6 Sol
 
 ```text
 MODEL ADAPTER — GPT-5.6 SOL
 
-Use extended reasoning for the full Deep Run. Do not compress the task into a quick audit. Carry inspection, decision, execution, verification and independent re-evaluation through to completion.
+Use extended reasoning where it changes the outcome: bottleneck selection, prioritization, conflicting evidence, implementation trade-offs and verification.
 
-Spend reasoning where it can change the outcome: dominant-bottleneck selection, conflicting evidence, materially different alternatives, adversarial review and post-change verification. Avoid spending it on repeated summaries or role-play that cannot change the decision.
+Do not compress a long workflow into an audit or plan. Continue through the workflow's explicit stop condition when authority and tools permit.
+
+Avoid spending reasoning on repeated summaries, decorative role-play or low-value issue generation.
 ```
 
-### GPT-5.6 Luna adapter
+### External coding agent
 
-Use Luna primarily for bounded sub-work. If Luna must run the full prompt, reduce parallel option count and preserve the verification/evidence phases; do not remove them to save tokens. For consequential final decisions, re-evaluate with Sol or Astra when available.
+```text
+MODEL ADAPTER — EXTERNAL CODING AGENT
 
-## Where to run
+Follow the canonical workflow literally before applying vendor-specific habits.
+Keep the GitHub control plane synchronized with actual repository state.
+Do not claim completion without the workflow's verification evidence.
+If your environment cannot perform a required verification step, record the gap rather than silently treating it as passed.
+```
 
-### ChatGPT Work / Codex
+## Benchmark policy
 
-Best environment for a repository-level Deep Run when the agent needs to inspect many files, research, edit code, run tests and carry multi-step work to completion. Prefer Astra Medium/High for the hardest runs and Sol High for normal full-project runs.
+Benchmark each workflow on the job it is supposed to do.
 
-### Normal ChatGPT chat with GitHub/web tools
+### Deep Run
+Compare:
+- outcome delta;
+- quality of dominant-bottleneck selection;
+- unsupported claims;
+- implementation completeness;
+- independent post-change evaluation;
+- regressions.
 
-Suitable for product strategy, repository review, GitHub changes, research-backed decisions and smaller implementation passes. The prompt remains useful, but completion quality depends on which write/test/runtime tools are actually available.
+### Backlog Builder
+Compare:
+- stale/duplicate work correctly removed;
+- important gaps captured;
+- priority quality;
+- issue executability;
+- acceptance/verification quality;
+- issue inflation rate;
+- how often an executor later needs to reconstruct missing context.
 
-### API / custom agent harness
+### Backlog Executor
+Compare:
+- verified READY issues completed;
+- acceptance-criteria success rate;
+- regression count;
+- failed/partial implementations incorrectly marked done;
+- issue-state accuracy;
+- blocked-issue handling;
+- UI verification on user-facing work;
+- ability to continue autonomously across multiple independent items;
+- unnecessary code/architecture churn.
 
-Use the same canonical prompt. Keep model/effort as configuration rather than duplicating prompt content. For Astra tool workflows, follow current Responses API guidance.
-
-## Benchmark model × effort, not model names
-
-A model recommendation is updated only after comparable runs.
-
-For a model/effort comparison:
-
-1. Start from the same repository commit or equivalent baseline state.
-2. Use the same Deep Run prompt version, context, tools, permissions, goal and success evidence.
-3. Run each candidate configuration at least **3 times** when the decision is important enough to justify a ranking.
-4. Score each run with `DRS-100` from `BENCHMARKS.md` and capture observable project outcomes.
-5. Record model, reasoning effort, tool/runtime environment, completion status, regressions, unsupported claims and resource usage when available.
-6. Prefer a configuration only when its advantage is repeatable and material, not because one run sounded better.
-
-Recommended benchmark configurations now:
-
-- Astra Medium
-- Astra High
-- Sol High
-- Sol Extra High (when available)
-- Luna Think only as a lower-capability reference/subtask baseline
+For important comparisons, prefer at least 3 comparable runs/configuration when practical.
 
 ## Model refresh policy
 
-Refresh this file when any of these occur:
+Refresh this file when:
 
-- a new frontier or coding/reasoning model is released;
+- a new frontier/coding/reasoning model or execution environment appears;
 - a model is renamed, retired or materially updated;
-- reasoning controls change;
-- OpenAI publishes materially different prompting guidance;
-- internal benchmark results contradict the current recommendation.
+- reasoning controls materially change;
+- official prompting/agent guidance changes;
+- internal benchmark evidence contradicts the current recommendation.
 
 For every refresh:
 
-1. Verify official release notes/help/model guidance first.
-2. Add the new model as `unbenchmarked`; do not immediately call it "best".
-3. Select 2–3 representative Deep Run tasks from real projects.
-4. Compare against the current preferred model/effort using the same baselines.
-5. Update recommendations only after recording results.
-6. Bump `profile_version` in `catalog.yaml` and update the verification date.
+1. Verify exact model/environment names and controls from current official sources where available.
+2. Add new configurations as **unbenchmarked**.
+3. Select representative tasks for all affected workflows, not only Deep Run.
+4. Start from comparable repository/task baselines.
+5. Update recommendations only after repeatable material evidence.
+6. Keep the three canonical workflow prompts unless evidence proves a new workflow is fundamentally necessary.
 
-## Official sources checked
+## Official OpenAI sources checked
 
-- OpenAI Model guidance — GPT-6 Astra and migration/prompting guidance: https://developers.openai.com/api/docs/guides/latest-model
-- OpenAI Help — GPT-5.6 and GPT-6 Pro in ChatGPT: https://help.openai.com/en/articles/20001354-gpt-56-and-gpt-6-pro-in-chatgpt
-- OpenAI Help — Managing usage with GPT-6 Astra in Work and Codex: https://help.openai.com/en/articles/20001516-managing-usage-with-gpt-6-astra-in-work-and-codex
+- GPT-6 Astra overview: https://openai.com/index/gpt-6-astra/
+- GPT-6 Astra API model page: https://developers.openai.com/api/docs/models/gpt-6-astra
+- GPT-5.6 in ChatGPT: https://help.openai.com/en/articles/20001354-gpt-56-in-chatgpt/
+- ChatGPT Work and Codex: https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex
 - OpenAI release notes: https://openai.com/products/release-notes/
