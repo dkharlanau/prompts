@@ -1,62 +1,97 @@
 # Prompts
 
-A compact library of reusable **agent loops** for improving products, services, software and repositories.
+A deliberately small library for **deep autonomous AI runs** on real products, services, websites, repositories and systems.
 
-This repository intentionally avoids large collections of one-shot prompts. A prompt belongs here only if it defines a repeatable loop with an explicit goal, feedback, verification and stop condition.
+The repository has one canonical prompt:
 
-## How to use
+## [Deep Run](loops/deep-run.md)
 
-1. Pick a loop from the catalog below.
-2. Fill the placeholders such as `{{PROJECT}}`, `{{GOAL}}`, `{{CONTEXT}}`, `{{CONSTRAINTS}}`, `{{METRICS}}` and `{{AUTHORITY}}`.
-3. Give the agent access to the real system of record when possible: repository, product, analytics, issues, tests and current user experience.
-4. Run the loop until its stop condition is reached, not until the first plan is produced.
-5. Record outcomes and failures so the next run starts with better evidence.
+`inspect → baseline → independent perspectives → bottleneck → alternatives → red team → experiment gate → execute → verify → independent evaluation → entropy check → learn → repeat`
 
-You can also invoke a template by reference, for example:
+Deep Run intentionally absorbs the useful parts of self-interview/council, Best-of-N, adversarial review, experimentation, evaluator-optimizer and repository gardening. Those are phases of one strong loop, not separate prompt variants.
 
-> Use `loops/autonomous-improvement.md` for `<project>`. Goal: `<outcome>`. Constraints: `<constraints>`.
+## When to use it
 
-## Core loops
+Use Deep Run when the task deserves substantial reasoning and a complete pass rather than a quick answer:
 
-| Loop | Best for | Core pattern |
-|---|---|---|
-| [Autonomous Improvement](loops/autonomous-improvement.md) | General project development | inspect → prioritize → execute → verify → learn |
-| [Council](loops/council.md) | Ambiguous product/strategy decisions | independent perspectives → conflict → synthesis |
-| [Best-of-N Tournament](loops/best-of-n.md) | Important choices with multiple viable directions | parallel alternatives → blind evaluation → winner |
-| [Adversarial Decision](loops/adversarial-decision.md) | Avoiding weak ideas and feature inflation | proposal → attack → evidence test → decision |
-| [Evaluator–Optimizer](loops/evaluator-optimizer.md) | Raising quality of an existing output | build → score → critique → improve |
-| [Experiment](loops/experiment.md) | Product/growth hypotheses | hypothesis → smallest test → evidence → decision |
-| [Discovery-to-Value](loops/discovery-to-value.md) | Products/services that need acquisition and activation | intent → discovery → value → return loop |
-| [Repository Gardening](loops/repository-gardening.md) | Long-lived agent-developed repositories | detect entropy → simplify → verify → repeat |
+- improve a product or service;
+- find the next high-leverage milestone;
+- improve discovery, acquisition, activation or retention;
+- deeply audit and improve a website;
+- solve a difficult repository/software problem;
+- reconsider architecture or product direction;
+- research a problem and turn findings into verified changes;
+- review a mature project for simplification, regressions and new opportunities.
 
-## Quality standard
+Do **not** force Deep Run onto a small deterministic edit or simple factual question.
 
-Every stable loop should have:
+## Where to use it
 
-- a concrete outcome rather than an activity goal;
-- inputs and authority boundaries;
-- an explicit iterative feedback mechanism;
-- independent evaluation where useful;
-- verification against the real artifact or environment;
-- a stop condition;
-- a way to preserve learning between runs;
-- low dependence on project-specific wording.
+- **ChatGPT Work / Codex** — preferred for long repository-level execution with files, code, tools and tests.
+- **ChatGPT with GitHub/web tools** — strong for product/repository audits, research, GitHub changes and scoped implementation.
+- **API/custom harness** — use the same canonical prompt; configure the model/effort separately rather than cloning the prompt.
 
-See [BENCHMARKS.md](BENCHMARKS.md) for the internal evaluation rubric and [RESEARCH.md](RESEARCH.md) for the research basis.
+See [MODEL_PROFILES.md](MODEL_PROFILES.md) for current model and reasoning recommendations.
+
+## Current model guidance
+
+| Configuration | Recommended use |
+|---|---|
+| **GPT-6 Astra — Medium** | Preferred starting point for hardest end-to-end Deep Runs |
+| **GPT-6 Astra — High** | Very difficult/ambiguous/consequential multi-domain run |
+| **GPT-5.6 Sol — High** | Default full Deep Run workhorse |
+| **GPT-5.6 Sol — Extra High** | Especially difficult one-off run when available |
+| **GPT-5.6 Luna — Think** | Bounded sub-work/pre-scan; not preferred as sole final judge when stronger models exist |
+
+As of 2026-09-09, official OpenAI sources checked for this repository do not list a model called `Solana`; see `MODEL_PROFILES.md` for handling that name.
+
+## How to invoke
+
+Minimal invocation:
+
+```text
+Use the canonical Deep Run from dkharlanau/prompts.
+Project: <project/repository>.
+Outcome: <real outcome>.
+Constraints: <important constraints>.
+Authority: <what may be changed>.
+Run it to completion and verify the resulting state.
+```
+
+If the agent already has project context, do not duplicate it. The prompt explicitly tells the agent to inspect the real sources of truth.
+
+Example:
+
+```text
+Use Prompts/Deep Run on Ptichi.
+Outcome: materially improve qualified organic discovery and first user value.
+Authority: inspect and modify the current development branch, create/update issues, run checks; do not deploy.
+```
+
+## Repository contract
+
+This repository is intentionally resistant to prompt proliferation.
+
+Do not add a new prompt because the domain changed. Improve `deep-run.md` when a generally useful failure pattern is discovered. Add a model-specific adapter only when benchmark evidence shows that the same canonical prompt needs different execution guidance for that model.
+
+Files:
+
+- `loops/deep-run.md` — canonical reusable prompt.
+- `MODEL_PROFILES.md` — model selection, reasoning effort, adapters and model-refresh policy.
+- `BENCHMARKS.md` — Deep Run quality and model×effort evaluation protocol.
+- `RESEARCH.md` — research/evidence basis.
+- `catalog.yaml` — machine-readable metadata.
+- `AGENTS.md` — instructions for agents using this repository.
 
 ## Template variables
 
-Common placeholders:
+- `{{PROJECT}}`
+- `{{OUTCOME}}`
+- `{{TARGET}}`
+- `{{CONTEXT}}`
+- `{{CONSTRAINTS}}`
+- `{{AUTHORITY}}`
+- `{{SUCCESS_EVIDENCE}}`
+- `{{STOP_CONDITION}}`
 
-- `{{PROJECT}}` — product, service, repository or system.
-- `{{GOAL}}` — measurable desired outcome.
-- `{{CONTEXT}}` — only context that materially affects decisions.
-- `{{TARGET}}` — user, customer, system or audience.
-- `{{CONSTRAINTS}}` — limits and non-goals.
-- `{{AUTHORITY}}` — what the agent may inspect/change without asking.
-- `{{METRICS}}` — evidence used to judge success.
-- `{{STOP_CONDITION}}` — when further looping has low expected value.
-
-## Design principle
-
-Prefer a small number of strong composable loops over a large prompt catalog. New templates should introduce a genuinely different decision or feedback pattern, not merely rename an existing prompt for another domain.
+The default principle is: **one strong loop, real evidence, real execution, independent re-evaluation, repeat only while marginal value remains high.**
