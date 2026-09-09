@@ -1,150 +1,209 @@
-# Deep Run Benchmarks
+# Workflow Benchmarks
 
-This repository evaluates one canonical prompt and its **model × reasoning-effort configuration**. The goal is to measure whether a Deep Run actually improves a real project, not whether its reasoning sounds sophisticated.
+This repository evaluates three canonical workflows against the job each one is supposed to do.
 
-This is an internal repository eval protocol, not an external scientific benchmark.
+The goal is not to reward sophisticated-sounding reasoning. The benchmark asks whether the workflow improves a real project/control plane and whether autonomous execution actually completes verified work.
 
-## DRS-100 — Deep Run Score
+These are internal repository eval protocols, not external scientific benchmarks.
 
-Score every dimension from 0–5 and apply the weight.
+# 1. DRS-100 — Deep Run Score
+
+Score each dimension 0–5 and apply the weight.
 
 | Dimension | Weight | 5/5 means |
 |---|---:|---|
-| Outcome improvement | 25 | The run materially improves the stated real-world outcome or produces decisive evidence that prevents a bad change. |
-| Evidence & verification | 20 | Claims are grounded in real sources/artifacts and the changed state is meaningfully verified. |
-| Bottleneck & decision quality | 15 | The run identifies the dominant constraint, compares real alternatives and handles uncertainty/trade-offs explicitly. |
-| Execution completeness | 15 | Authorized work is carried through to a coherent changed state rather than stopping at analysis or a plan. |
-| Independent re-evaluation | 10 | The result is judged from scratch against the same baseline/success evidence and weak work is not defended. |
-| Learning & iteration | 5 | New evidence changes subsequent decisions and durable learning is preserved without documentation inflation. |
-| Regression & entropy control | 5 | The run checks for regressions, duplicated work and avoidable complexity. |
-| Reasoning efficiency | 5 | Heavy reasoning is spent on decision-changing work rather than repeated summaries, theatrical roles or uncontrolled loops. |
+| Outcome improvement | 25 | The run materially improves the stated outcome or prevents a bad change with decisive evidence. |
+| Evidence & verification | 20 | Claims are grounded and the changed state is meaningfully verified. |
+| Bottleneck & decision quality | 15 | The dominant constraint, alternatives, uncertainty and trade-offs are handled well. |
+| Execution completeness | 15 | Authorized work reaches a coherent changed state rather than stopping at a plan. |
+| Independent re-evaluation | 10 | The result is judged from scratch and weak work is not defended. |
+| Learning & iteration | 5 | New evidence changes later decisions and durable learning is preserved. |
+| Regression & entropy control | 5 | Regressions, duplication and avoidable complexity are checked. |
+| Reasoning efficiency | 5 | Heavy reasoning is spent on decision-changing work. |
 
-`DRS-100 = Σ (dimension_score / 5 × weight)`
+`DRS-100 = Σ (score / 5 × weight)`
 
-## Prompt status
+# 2. BQS-100 — Backlog Quality Score
 
-- **experimental** — structure exists but has not passed representative runs.
-- **candidate** — DRS ≥ 75 in at least two materially different real tasks with no critical failure.
-- **stable** — DRS ≥ 85 in at least three materially different domains and repeated runs show no recurring critical failure.
+Use for `backlog-builder.md`.
 
-A high score does not imply that every iteration must change the project. Correctly rejecting a weak proposal or concluding `NO CHANGE` can score highly when evidence supports it.
+| Dimension | Weight | 5/5 means |
+|---|---:|---|
+| Outcome alignment | 20 | Top backlog work clearly contributes to the project goal rather than activity volume. |
+| Priority quality | 20 | High-leverage, dependency-unblocking work ranks above easy low-value work. |
+| Executability | 20 | READY issues contain enough context, scope, acceptance criteria and verification for an autonomous executor. |
+| Evidence & traceability | 15 | Important tasks are supported by observable project evidence; hypotheses/unknowns are explicit. |
+| Backlog hygiene | 10 | Duplicates, stale, obsolete and already-done issues are correctly merged/closed/reclassified. |
+| Dependency & queue design | 10 | Dependencies, blockers and a clear actionable queue are represented accurately. |
+| Inflation control | 5 | The builder resists speculative issue generation and keeps the backlog compact enough to guide execution. |
 
-## Critical failures
+`BQS-100 = Σ (score / 5 × weight)`
 
-A run cannot score as stable if it materially tends to:
+Useful secondary measures:
+- percentage of READY issues an executor can start without reconstructing missing context;
+- duplicate/stale issue rate before vs after;
+- number of high-priority issues later invalidated as unnecessary;
+- number of important discovered gaps that had no issue;
+- executor clarification/rework rate caused by issue quality.
 
-- stop after an audit/plan when safe execution was authorized;
+# 3. BES-100 — Backlog Execution Score
+
+Use for `backlog-executor.md`.
+
+| Dimension | Weight | 5/5 means |
+|---|---:|---|
+| Verified completion | 25 | High-value READY work is actually completed with observable verification. |
+| Acceptance correctness | 20 | Implementations satisfy intended outcomes and acceptance criteria, not merely issue wording. |
+| Regression control | 15 | Targeted and periodic broader checks catch/fix regressions caused by execution. |
+| Control-plane integrity | 10 | GitHub issue state accurately reflects repository/product reality. |
+| Autonomous continuation | 10 | The agent continues across multiple independent issues and does not stop at the first blocker/batch. |
+| Product/UI verification | 10 | User-facing changes are inspected in the resulting experience when tooling permits. |
+| Scope & architecture discipline | 5 | Work avoids speculative features, unrelated refactors and unnecessary abstraction. |
+| Blocker handling | 5 | Blocked/human-decision work is recorded accurately while independent READY work continues. |
+
+`BES-100 = Σ (score / 5 × weight)`
+
+Useful secondary measures:
+- verified issues completed / READY issues attempted;
+- issues incorrectly marked complete;
+- regressions per completed issue/batch;
+- blocked issue handling accuracy;
+- autonomous issues completed before human intervention;
+- user-facing changes with actual UI verification;
+- unnecessary files/dependencies/abstractions introduced;
+- re-open rate after executor completion.
+
+# Status levels
+
+For each workflow separately:
+
+- **experimental** — structure exists but has not passed representative real runs.
+- **candidate** — score ≥75 in at least two materially different real tasks with no critical failure.
+- **stable** — score ≥85 across at least three materially different tasks/domains, with repeatable performance and no recurring critical failure.
+
+A correct `NO CHANGE`, issue closure, rejection or BLOCKED classification can score highly when evidence supports it.
+
+# Critical failures
+
+## Deep Run
+
+Cannot be stable if it materially tends to:
+- stop at audit/plan when safe execution was authorized;
 - fabricate evidence or silently turn hypotheses into facts;
-- optimize number of files/features/issues/commits instead of the outcome;
-- choose a bottleneck without examining plausible competing causes;
-- generate multiple cosmetic variants and call them alternatives;
-- defend an implementation because work was already invested in it;
-- declare improvement without inspecting/verifying the changed state;
-- loop without a meaningful state/evidence change;
-- create duplicate issues, abstractions, content or documentation;
-- ignore explicit authority/deployment constraints;
-- repeatedly ask questions whose answers are already available from the project context.
+- optimize files/features/commits rather than outcome;
+- declare improvement without verifying changed state;
+- loop without meaningful state/evidence change.
 
-## Canonical benchmark protocol
+## Backlog Builder
 
-For a prompt-version evaluation:
+Cannot be stable if it materially tends to:
+- create issue volume as a proxy for project progress;
+- duplicate existing work;
+- preserve obviously stale/obsolete work;
+- assign priority without evidence or dependencies;
+- produce READY issues whose outcome/acceptance/verification is too vague for autonomous execution;
+- convert every idea or unknown into an implementation task.
 
-1. Freeze a meaningful baseline state (commit/snapshot/data window).
-2. Define `OUTCOME`, `TARGET`, `CONSTRAINTS`, `AUTHORITY` and `SUCCESS_EVIDENCE` before the run.
-3. Run a simpler one-shot baseline using the same context/tools when a baseline comparison is feasible.
-4. Run the current `deep-run.md` against the same starting state.
-5. Score both against the same observable rubric.
-6. Run Deep Run again from the resulting changed state to test whether it finds a new dominant bottleneck rather than repeating the first pass.
-7. Record failures that would justify changing the prompt, model adapter or benchmark.
+## Backlog Executor
 
-## Model × reasoning-effort benchmark
+Cannot be stable if it materially tends to:
+- stop after one issue/batch while independent READY work remains;
+- mark issues done without satisfying acceptance criteria;
+- treat a green build as sufficient verification for user-facing changes when UI inspection is available;
+- ignore failing tests/regressions caused by its changes;
+- blindly implement stale/obsolete issue text;
+- stop the entire run because one issue is blocked;
+- create large unrelated refactors/features while executing scoped backlog;
+- leave GitHub issue state inconsistent with actual work.
 
-Do not rank models from vendor claims or one impressive run.
+# Canonical evaluation protocol
 
-When comparing configurations:
+For any workflow/model comparison:
 
-1. Use the **same Deep Run version**.
-2. Start each candidate from the **same baseline state**.
-3. Give each candidate the same tool access, permissions, files, project context and success evidence.
-4. Change only the model/reasoning configuration unless the test explicitly evaluates a model adapter.
-5. Run each important configuration at least **3 times** when practical.
-6. Record both DRS-100 and real project outcomes.
-7. Prefer the configuration whose advantage is repeatable and materially useful.
+1. Freeze a meaningful baseline repository/product/backlog state.
+2. Define the workflow goal, constraints, authority and observable success evidence before the run.
+3. Use the same workflow version and equivalent tool/permission context for compared configurations.
+4. Change only the model/reasoning/environment unless the experiment explicitly tests an adapter or tool difference.
+5. Run important configurations at least **3 times** when practical.
+6. Score using DRS-100, BQS-100 or BES-100 as appropriate.
+7. Record project-native outcomes and critical failures in addition to the score.
+8. Prefer a configuration only when the advantage is repeatable and materially useful.
 
-Current configurations to benchmark:
+# End-to-end lifecycle benchmark
 
-- GPT-6 Astra — Medium
-- GPT-6 Astra — High
-- GPT-5.6 Sol — High
-- GPT-5.6 Sol — Extra High when available
-- GPT-5.6 Luna — Think as a lower-capability/subtask reference
+Periodically benchmark the full system, not only isolated prompts:
 
-## Representative test domains
+```text
+Deep Run → Backlog Builder → Backlog Executor
+```
 
-Use real work, not artificial trivia. Maintain at least these three categories:
+Start from a real project state with imperfect direction/backlog.
+Measure:
 
-### A. Product / growth
+- whether Deep Run discovers a genuinely high-value direction;
+- whether Backlog Builder converts that evidence into a clean executable queue;
+- whether Backlog Executor completes the queue correctly and continues autonomously;
+- how much rework/clarification is needed between stages;
+- whether the final product state is materially better than the initial state;
+- whether issue count/complexity grew without proportional value.
 
-Example shape: identify and implement the highest-leverage improvement to discovery → first value → continuation in an existing user-facing product.
+The ideal lifecycle has **low handoff loss**: evidence and intent survive the transition from discovery → backlog → execution.
 
-### B. Website / service
+# Model × environment benchmark
 
-Example shape: deeply audit a real website/service, find the dominant user/business bottleneck, make safe changes, and verify the experience rather than only source code.
+For autonomous work, benchmark:
 
-### C. Software / repository
+`workflow × model × reasoning effort × execution environment`
 
-Example shape: resolve a non-trivial repository problem or improve architecture/maintainability with executable verification and regression control.
+Environment matters because repository access, shell/runtime, tests, browser/UI inspection, GitHub issue tools, branch isolation and persistence can materially affect outcomes.
 
-Prefer benchmark tasks from projects that already have real history, constraints and artifacts.
+Current OpenAI configurations worth testing when available:
 
-## Measures worth recording
+- Deep Run — GPT-6 Astra Medium / High;
+- Deep Run — GPT-5.6 Sol High / Extra High;
+- Backlog Builder — GPT-5.6 Sol High vs GPT-6 Astra Medium;
+- Backlog Executor — Codex/Work + GPT-6 Astra Medium/High;
+- Backlog Executor — Codex/Work + GPT-5.6 Sol High/Extra High.
 
-Attach project-native metrics when they exist:
+External agents/models should use the same baseline tasks and workflow text before any vendor-specific adapter is introduced.
 
-- task/issue actually resolved;
-- tests/build/static checks;
-- regression count;
-- time-to-first-value;
-- conversion/activation/retention;
-- qualified search/discovery visibility;
-- user/expert preference score;
-- unsupported-claim count;
-- duplicated work introduced/removed;
-- before/after quality rubric;
-- number of consequential decisions changed by new evidence;
-- tool calls, elapsed task time and allowance/token usage when exposed by the environment.
+# Representative real-project suite
 
-Resource use is diagnostic, not the primary goal. A more expensive run is acceptable when it produces materially better outcomes.
+Maintain at least:
 
-## Benchmark record
+1. **Product/growth** — e.g. discovery → first value → continuation in an existing product.
+2. **Website/service** — real user-facing site with search, UX and UI verification.
+3. **Software/repository** — non-trivial technical backlog with dependencies/tests.
 
-Store material evaluations using this schema:
+Prefer projects with real history, constraints, existing issues and measurable artifacts.
+
+# Benchmark record
 
 ```yaml
-prompt_id: deep-run
-prompt_version: <version>
+workflow_id: <deep-run|backlog-builder|backlog-executor>
+workflow_version: <version>
 profile_version: <version>
 date: <yyyy-mm-dd>
 project: <project>
-domain: <product|website|service|software|research|other>
 baseline_ref: <commit/snapshot/date>
-outcome: <desired outcome>
+goal: <desired outcome>
 model: <exact model label/id>
-reasoning_effort: <low|medium|high|extra-high|pro|other>
-environment: <chatgpt|work|codex|api|other>
+reasoning_effort: <setting>
+environment: <chatgpt|work|codex|api|external-agent|other>
 run_number: <n>
-drs_100: <0-100>
+score_type: <DRS-100|BQS-100|BES-100>
+score: <0-100>
 observable_outcome: <before/after result>
 completion: <complete|partial|blocked|failed>
 regressions: []
-unsupported_claims: <n or notes>
+incorrect_state_changes: []
 resource_usage: <if available>
 critical_failures: []
 notes: <short evidence-based notes>
 ```
 
-## Promotion rule
+# Promotion rule
 
-A model profile or prompt version becomes the preferred default only when its improvement is visible in comparable outcomes across multiple runs. Update `MODEL_PROFILES.md` and `catalog.yaml` together with the evidence reference.
+A workflow version, model profile or adapter becomes preferred only when its advantage is visible in comparable real outcomes across repeated runs.
 
-The benchmark itself should evolve when real failures expose blind spots in this rubric.
+The benchmark itself should evolve when actual failures expose blind spots.
