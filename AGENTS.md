@@ -1,62 +1,100 @@
 # AGENTS.md
 
-This repository provides one canonical reusable workflow: `loops/deep-run.md`.
+This repository provides exactly three canonical reusable workflows:
+
+- `loops/deep-run.md`
+- `loops/backlog-builder.md`
+- `loops/backlog-executor.md`
 
 ## Core rule
 
-Do not create domain-specific prompt variants. Product, service, website, repository, growth, architecture and research work should use the same Deep Run with different inputs and evidence.
+Do not create domain-specific prompt variants. New domains, roles, products, websites, services or model names should normally use one of these three workflows with different inputs and evidence.
 
-A new prompt file is justified only if repeated benchmark evidence shows a fundamentally different workflow is required and cannot be expressed as an optional Deep Run phase. The default response to a new failure pattern is to improve `deep-run.md`, not to add another prompt.
+A new prompt file is justified only when repeated benchmark evidence shows a fundamentally different job that cannot be expressed cleanly as deep improvement, backlog construction, or backlog execution.
+
+## Routing
+
+Choose by the user's actual job:
+
+### Deep Run
+Use when direction, diagnosis or the next highest-leverage improvement is uncertain.
+
+Typical shorthand:
+- `run a deep loop`
+- `improve this project`
+- `find the next milestone`
+- `audit and improve`
+- `think from multiple roles and implement`
+
+### Backlog Builder
+Use when the main artifact is the GitHub backlog.
+
+Typical shorthand:
+- `fill the backlog`
+- `review our issues`
+- `add what is missing`
+- `prioritize the backlog`
+- `turn this research into GitHub work`
+
+The expected result is an updated control plane, not implementation unless the user explicitly combines planning and execution.
+
+### Backlog Executor
+Use when a usable backlog exists and the user wants sustained implementation.
+
+Typical shorthand:
+- `work through the backlog`
+- `run autonomously`
+- `keep coding until the backlog is done`
+- `Codex loop`
+- `execute everything actionable`
+
+The executor must continue past independently blocked issues, verify changes, keep issues synchronized and stop only when meaningful actionable work is exhausted or outside authority.
+
+## Combination rules
+
+Do not chain all workflows mechanically.
+
+Use:
+- `Deep Run → Backlog Builder` when deep research/strategy should become durable work;
+- `Backlog Builder → Backlog Executor` when the backlog needs preparation before autonomous coding;
+- `Deep Run → Backlog Builder → Backlog Executor` for a full project cycle when both direction and execution backlog are initially weak;
+- `Backlog Executor` alone when backlog quality is already strong.
+
+During Backlog Executor, create new issues only for genuine discovered defects, blockers or important follow-ups. Do not expand the backlog merely to prolong execution.
 
 ## When asked to use this library
 
-1. Read `loops/deep-run.md` and `MODEL_PROFILES.md`.
+1. Read the selected workflow and `MODEL_PROFILES.md`.
 2. Inspect the target project's real context before asking for missing inputs.
-3. Fill known placeholders from the target repository, current conversation, issues, product, analytics, tests and other sources of truth.
-4. Infer only routine details. Ask only for consequential/irreversible information that cannot be resolved from available context.
-5. Execute the instantiated Deep Run against the target project. Do not merely return the filled prompt unless the user explicitly asks for prompt text.
-6. Carry the loop through implementation and verification when authority/tools permit. Do not stop after analysis or planning.
-7. Respect deployment, merge, publishing and other irreversible-action constraints from the target project/user.
-8. Preserve the same success evidence across before/after evaluation.
-9. Stop when marginal value becomes low, the goal is met, external evidence is required, or the next consequential action is outside authority.
+3. Fill known placeholders from the repository, current conversation, issues, product, analytics, tests and other sources of truth.
+4. Infer routine/reversible details; ask only when a missing answer could materially change a consequential or irreversible outcome.
+5. Execute the workflow against the target project. Do not merely return prompt text unless the user asked for it.
+6. Respect branch, deployment, merge, publishing and other irreversible-action constraints.
+7. Preserve observable verification evidence.
+8. Do not claim completion from code changes alone when user/product behavior can be checked.
 
 ## Model selection
 
 Use `MODEL_PROFILES.md` as the current source of truth.
 
-Default order for a substantial Deep Run when available:
+General defaults when available:
 
-1. GPT-6 Astra Medium for hardest end-to-end work.
-2. GPT-6 Astra High when the task is unusually difficult, ambiguous or consequential, or Medium materially underperformed.
-3. GPT-5.6 Sol High as the default full-run workhorse.
-4. GPT-5.6 Sol Extra High for especially difficult one-off runs when available.
-5. GPT-5.6 Luna/Think for bounded sub-work or lower-capability baseline, not as the preferred sole final evaluator when stronger models are available.
+- Deep Run: GPT-6 Astra Medium; High for unusually hard/ambiguous/consequential work. GPT-5.6 Sol High is a strong default workhorse.
+- Backlog Builder: GPT-5.6 Sol High for normal repository/product backlog work; GPT-6 Astra Medium when the backlog depends on broad research, product synthesis or very large context.
+- Backlog Executor: prefer a coding-capable environment such as Codex/Work. GPT-6 Astra is preferred for the hardest long autonomous repository runs; GPT-5.6 Sol High is strong for normal execution.
 
-Do not assume that maximum reasoning effort is always superior. Prefer benchmarked model×effort combinations.
+Do not assume maximum reasoning effort is always superior. Benchmark model × effort × workflow.
 
-If the user names a model not recognized in current verified profiles, check current official model documentation before inventing behavior or mapping names.
-
-## How to interpret user shorthand
-
-Examples:
-
-- `Use Prompts for Ptichi and run deep` → instantiate and execute `deep-run.md` with Ptichi's current project context.
-- `Pick the best prompt for this repo` → use Deep Run unless the task is too small to justify it.
-- `Run another loop` → re-run Deep Run from the project's changed current state, not from the previous plan.
-- `Use the Astra version` → use the same Deep Run plus the Astra adapter from `MODEL_PROFILES.md`.
-- `Use Sol` → use the same Deep Run plus the Sol guidance from `MODEL_PROFILES.md`.
+For external agents/models (for example Kimi or future coding agents), use the same workflow text first. Add a profile only after the exact model/version and settings have been tested on comparable tasks.
 
 ## Evaluation contract
 
-Use `BENCHMARKS.md` when evaluating the prompt or a model profile.
+Use `BENCHMARKS.md` for prompt/model evaluation.
 
-Never claim that a model, reasoning effort or prompt version is better because it sounds stronger or because vendor documentation says it is more capable. Record comparable runs against observable outcomes.
+Evaluate each workflow on its real job:
 
-When a real run exposes a reusable failure mode, decide whether to:
+- Deep Run: did the project measurably improve?
+- Backlog Builder: did backlog quality, prioritization and executability improve without issue inflation?
+- Backlog Executor: how much high-value backlog was correctly completed with verification, low regressions and accurate issue state?
 
-- improve the canonical prompt;
-- improve model guidance;
-- improve the benchmark;
-- or leave it project-specific.
-
-Do not preserve ephemeral reasoning as repository documentation.
+When a run exposes a reusable failure mode, improve the relevant canonical workflow, model guidance or benchmark. Do not add a fourth prompt by default.
