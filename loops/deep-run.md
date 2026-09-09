@@ -1,0 +1,221 @@
+---
+id: deep-run
+version: 1.0.0
+status: candidate
+category: universal
+pattern: inspect + council + tournament + adversarial review + experiment gate + execute + evaluator-optimizer + reflection
+best_for: deep autonomous improvement of a product, service, repository, website, workflow or strategy
+avoid_when: a small deterministic edit, simple factual question, or an irreversible action that still requires explicit approval
+benchmark_target: DRS-100 >= 85 across at least 3 materially different domains
+model_guidance: ../MODEL_PROFILES.md
+research_basis: [anthropic-effective-agents, openai-model-guidance, openai-harness-engineering, openai-evals, self-refine, reflexion]
+---
+
+# Deep Run
+
+One canonical prompt for substantial project work. It contains the useful parts of council/self-interview, Best-of-N, red-team, experiment, evaluator-optimizer and repository-gardening patterns, but activates them only when they can change the outcome.
+
+## Use when
+
+Use this prompt when the goal is consequential enough to justify a full autonomous pass: improving a product, finding the next milestone, increasing acquisition or activation, redesigning an experience, resolving a difficult technical problem, reviewing architecture, improving a repository, validating a strategy, or turning research into verified changes.
+
+Do not use it for a tiny deterministic edit or a question that can be answered reliably in one step.
+
+## Inputs
+
+- `{{PROJECT}}` — product, service, repository, website, workflow or system.
+- `{{OUTCOME}}` — the real outcome to improve; avoid activity goals.
+- `{{TARGET}}` — user, customer, system, audience or stakeholder affected by the outcome.
+- `{{CONTEXT}}` — only context that materially changes decisions. Inspect sources of truth instead of duplicating discoverable context here.
+- `{{CONSTRAINTS}}` — non-goals, limits, deployment restrictions, budget or compatibility constraints.
+- `{{AUTHORITY}}` — what may be inspected, changed, committed, tested or published without further approval.
+- `{{SUCCESS_EVIDENCE}}` — observable evidence that would demonstrate improvement.
+- `{{STOP_CONDITION}}` — optional explicit stopping rule. If omitted, use the built-in marginal-value rule.
+
+## Canonical template
+
+```text
+DEEP RUN
+
+PROJECT
+{{PROJECT}}
+
+OUTCOME
+{{OUTCOME}}
+
+TARGET
+{{TARGET}}
+
+CONTEXT
+{{CONTEXT}}
+
+CONSTRAINTS
+{{CONSTRAINTS}}
+
+AUTHORITY
+{{AUTHORITY}}
+
+SUCCESS EVIDENCE
+{{SUCCESS_EVIDENCE}}
+
+MISSION
+Carry the intended work through to a verified improvement. Do not optimize for number of ideas, files, features, pages, issues, commits, tokens saved, or visible activity. Optimize for the stated outcome.
+
+Use substantial reasoning and available tools when they can materially improve the result. Do not stop at a plan, audit, recommendation list, or partial implementation when safe execution is authorized. Do not create work merely to satisfy this prompt.
+
+OPERATING RULES
+
+- Treat the real product, repository, data, analytics, tests, current UI and external evidence as stronger sources than stale documentation or intended behavior.
+- Distinguish FACT, OBSERVATION, INFERENCE, HYPOTHESIS and UNKNOWN whenever the distinction could change a decision.
+- Prefer evidence over confidence and outcomes over activity.
+- Prefer simplification, deletion, consolidation and reuse when they achieve the outcome better than adding features.
+- Preserve useful existing behavior and project constraints.
+- Infer routine missing details from available context and sources of truth. Ask only when a missing answer is consequential, irreversible, or genuinely cannot be resolved from available evidence.
+- If independent work can materially improve quality or speed, use parallel roles/subagents/workstreams. Do not create role-play theatre: every perspective must be capable of changing the decision.
+- Re-evaluate from the changed state after every meaningful iteration. Do not mechanically continue the original plan.
+
+LOOP
+
+1. INSPECT REALITY
+Inspect the current state deeply enough to understand how the system actually behaves. Depending on the task, inspect code, product/UI, documentation, issues, recent changes, tests, analytics, user journeys, datasets, search/discovery state, competitors, research and external constraints.
+
+Create a compact evidence map:
+- what is known;
+- what is observed directly;
+- what is inferred;
+- what is uncertain;
+- which unknowns could change the next action.
+
+2. ESTABLISH A BASELINE
+Define the current state against SUCCESS EVIDENCE before changing it. Use real metrics when available. When direct metrics are unavailable, define explicit observable proxies or a rubric that can be applied consistently before and after.
+
+3. INDEPENDENT PERSPECTIVES
+Infer the smallest set of perspectives that could materially change the outcome. Examples include target user, product owner, domain expert, growth/search specialist, UX designer, architect, engineer, data analyst, operator, buyer, competitor and skeptic.
+
+Have relevant perspectives analyze independently before synthesis. Each should state:
+- strongest finding;
+- decisive evidence;
+- biggest risk or missed opportunity;
+- preferred action;
+- what evidence would change its mind.
+
+Do not force consensus. Preserve meaningful disagreement.
+
+4. FIND THE DOMINANT BOTTLENECK
+Identify the single highest-leverage constraint currently preventing OUTCOME. Separate symptoms from causes. Explicitly compare it with plausible competing bottlenecks and explain why it dominates now.
+
+5. GENERATE MATERIAL ALTERNATIVES
+For the dominant bottleneck, generate 3–7 materially different responses when the solution space is genuinely open. Alternatives must use different mechanisms or hypotheses, not cosmetic variations.
+
+Include, when legitimate:
+- improve existing behavior;
+- simplify or remove something;
+- change positioning or flow;
+- use existing data/capability differently;
+- run an experiment;
+- defer or do nothing.
+
+Normalize candidates by mechanism, expected upside, evidence, uncertainty, cost, risk, reversibility and easiest falsification test.
+
+6. RED TEAM THE LEADERS
+Attack the strongest candidates as if they are wrong.
+
+Run a pre-mortem: assume the chosen direction was implemented and failed. Identify the most plausible causes.
+
+Audit decisive claims as FACT / OBSERVATION / INFERENCE / HYPOTHESIS / UNKNOWN. Look for cheaper substitutes, hidden dependencies, second-order effects, feature inflation and reasons the target user may not care.
+
+7. DECIDE
+Choose the action with the strongest expected outcome relative to evidence, uncertainty, cost, risk, reversibility and strategic compounding.
+
+Do not use fake precision. If uncertainty is decision-changing, say so.
+
+Valid decisions include IMPLEMENT, EXPERIMENT, SIMPLIFY/DELETE, DEFER and NO CHANGE.
+
+8. EXPERIMENT GATE
+Before a costly implementation, ask whether one unresolved uncertainty could reverse the decision.
+
+If yes and it can be tested cheaply, define the smallest falsifiable test first:
+- hypothesis;
+- falsification evidence;
+- metric/comparison;
+- decision threshold.
+
+Run it within AUTHORITY using the closest available real-world conditions. Do not substitute internal simulation for accessible real evidence.
+
+If no decision-changing uncertainty remains, proceed directly.
+
+9. EXECUTE
+Within AUTHORITY, make the smallest coherent set of changes capable of materially improving OUTCOME.
+
+Carry work through implementation. For software/repositories, edit the real files and run appropriate checks. For products/services, improve the real user-facing artifact or operational system. For strategy/research, produce the decision artifact and update the system of record when appropriate.
+
+Do not expand scope merely because additional work is possible. If new information invalidates the plan, revise the plan.
+
+10. VERIFY THE RESULT
+Verify the changed state, not the intention.
+
+Use the checks relevant to this project, such as:
+- build/tests/static checks;
+- real UI or workflow inspection;
+- target-user journey replay;
+- accessibility/performance;
+- data correctness;
+- search/discovery behavior;
+- conversion/activation signals;
+- architectural invariants;
+- regression checks;
+- external evidence or source validation.
+
+Calibrate verification to the consequence of the change. Do not manufacture tests that merely mirror the implementation.
+
+11. INDEPENDENT EVALUATION
+Evaluate the result from scratch against the same baseline and SUCCESS EVIDENCE. The evaluator must not defend the implementation because effort was spent on it.
+
+Report:
+- before;
+- after;
+- delta;
+- strongest remaining defect;
+- regressions or new complexity;
+- confidence and evidence quality.
+
+If improvement is weak or negative, diagnose whether the implementation, hypothesis, bottleneck choice or evaluation method was wrong. Correct it rather than inflating the score.
+
+12. ENTROPY CHECK
+Before continuing, inspect whether the iteration introduced avoidable complexity: duplicated concepts, stale docs, dead files, unnecessary abstractions, overlapping issues, inconsistent patterns, content cannibalization or maintenance burden.
+
+Remove or consolidate entropy when doing so is safe and clearly improves the system.
+
+13. LEARN
+Preserve only durable learning that should affect later runs:
+- validated/rejected hypotheses;
+- decisions and why they changed;
+- useful measurements;
+- failure modes;
+- new constraints;
+- reusable project rules.
+
+Do not create documentation for ephemeral reasoning.
+
+14. REPEAT FROM REALITY
+Re-inspect the changed state and identify the new dominant bottleneck.
+
+Run another iteration only if its expected marginal value is meaningful. A new iteration may choose a different mechanism, perspective or hypothesis from the previous one.
+
+STOP
+Stop when the OUTCOME is sufficiently supported by SUCCESS EVIDENCE, when another iteration has low expected marginal value, when progress requires external evidence that is not currently accessible, or when the next consequential action is outside AUTHORITY.
+
+If {{STOP_CONDITION}} is supplied, respect it as an additional condition.
+
+FINAL REPORT
+Keep the final report compact relative to the work performed. State:
+- what materially changed;
+- evidence of improvement or failure;
+- important decisions/rejected assumptions;
+- remaining uncertainty or blocker;
+- next highest-leverage action, only if one remains.
+```
+
+## Expected result
+
+A real, verified change or decision with an evidence trail. A successful run may add, modify, simplify, delete, experiment, or conclude that no change is currently justified.
