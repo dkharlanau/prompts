@@ -1,33 +1,38 @@
 # AGENTS.md
 
-This repository provides exactly three canonical reusable workflows:
+This repository provides exactly two canonical reusable workflows:
 
 - `loops/deep-run.md`
-- `loops/backlog-builder.md`
 - `loops/backlog-executor.md`
+
+Deep Run has two modes:
+- `BACKLOG` — deep analysis whose output is a cleaned, prioritized, execution-ready backlog.
+- `EXECUTE` — deep analysis whose output is a changed and verified project state.
 
 ## Core rule
 
-Do not create domain-specific prompt variants. New domains, roles, products, websites, services or model names should normally use one of these three workflows with different inputs and evidence.
+Do not create domain-specific prompt variants. New domains, roles, products, websites, services or model names should normally use one of these two workflows with different inputs and evidence.
 
-A new prompt file is justified only when repeated benchmark evidence shows a fundamentally different job that cannot be expressed cleanly as deep improvement, backlog construction, or backlog execution.
+A new prompt file is justified only when repeated benchmark evidence shows a fundamentally different job that cannot be expressed cleanly as Deep Run BACKLOG, Deep Run EXECUTE, or Backlog Executor.
 
 ## Routing
 
-Choose by the user's actual job:
+Choose by the user's actual job.
 
-### Deep Run
-Use when direction, diagnosis or the next highest-leverage improvement is uncertain.
+### Deep Run — EXECUTE
+Use when direction, diagnosis or the next highest-leverage improvement is uncertain and the agent should implement justified changes now.
 
 Typical shorthand:
 - `run a deep loop`
 - `improve this project`
-- `find the next milestone`
+- `find the next milestone and do it`
 - `audit and improve`
 - `think from multiple roles and implement`
 
-### Backlog Builder
-Use when the main artifact is the GitHub backlog.
+Default ordinary Deep Run requests to EXECUTE unless backlog-only intent is clear.
+
+### Deep Run — BACKLOG
+Use when direction/diagnosis still requires deep reasoning, but the desired durable output is the GitHub backlog rather than immediate product implementation.
 
 Typical shorthand:
 - `fill the backlog`
@@ -35,8 +40,9 @@ Typical shorthand:
 - `add what is missing`
 - `prioritize the backlog`
 - `turn this research into GitHub work`
+- `prepare work for Codex/Kimi`
 
-The expected result is an updated control plane, not implementation unless the user explicitly combines planning and execution.
+The expected result is an updated control plane. Do not implement product changes unless the user explicitly extends authority.
 
 ### Backlog Executor
 Use when a usable backlog exists and the user wants sustained implementation.
@@ -52,13 +58,14 @@ The executor must continue past independently blocked issues, verify changes, ke
 
 ## Combination rules
 
-Do not chain all workflows mechanically.
+Do not chain workflows mechanically.
 
 Use:
-- `Deep Run → Backlog Builder` when deep research/strategy should become durable work;
-- `Backlog Builder → Backlog Executor` when the backlog needs preparation before autonomous coding;
-- `Deep Run → Backlog Builder → Backlog Executor` for a full project cycle when both direction and execution backlog are initially weak;
-- `Backlog Executor` alone when backlog quality is already strong.
+- `Deep Run BACKLOG → Backlog Executor` when analysis should prepare durable work for Codex/Kimi/another coding agent;
+- `Deep Run EXECUTE` alone when ChatGPT/Work has enough authority/tools to make the best changes immediately;
+- `Backlog Executor` alone when backlog quality and direction are already strong.
+
+During Deep Run EXECUTE, create/update issues only for durable follow-up work when useful; do not convert execution into backlog inflation.
 
 During Backlog Executor, create new issues only for genuine discovered defects, blockers or important follow-ups. Do not expand the backlog merely to prolong execution.
 
@@ -79,22 +86,22 @@ Use `MODEL_PROFILES.md` as the current source of truth.
 
 General defaults when available:
 
-- Deep Run: GPT-6 Astra Medium; High for unusually hard/ambiguous/consequential work. GPT-5.6 Sol High is a strong default workhorse.
-- Backlog Builder: GPT-5.6 Sol High for normal repository/product backlog work; GPT-6 Astra Medium when the backlog depends on broad research, product synthesis or very large context.
+- Deep Run EXECUTE: GPT-6 Astra Medium; High for unusually hard/ambiguous/consequential work. GPT-5.6 Sol High is a strong default workhorse.
+- Deep Run BACKLOG: GPT-5.6 Sol High for normal repository/product backlog reasoning; GPT-6 Astra Medium when the backlog depends on broad research, product synthesis or very large context.
 - Backlog Executor: prefer a coding-capable environment such as Codex/Work. GPT-6 Astra is preferred for the hardest long autonomous repository runs; GPT-5.6 Sol High is strong for normal execution.
 
-Do not assume maximum reasoning effort is always superior. Benchmark model × effort × workflow.
+Do not assume maximum reasoning effort is always superior. Benchmark model × effort × workflow/mode.
 
-For external agents/models (for example Kimi or future coding agents), use the same workflow text first. Add a profile only after the exact model/version and settings have been tested on comparable tasks.
+For external agents/models (for example Kimi or future coding agents), use Backlog Executor first. Add a profile only after the exact model/version and settings have been tested on comparable tasks.
 
 ## Evaluation contract
 
 Use `BENCHMARKS.md` for prompt/model evaluation.
 
-Evaluate each workflow on its real job:
+Evaluate each job on its real outcome:
 
-- Deep Run: did the project measurably improve?
-- Backlog Builder: did backlog quality, prioritization and executability improve without issue inflation?
+- Deep Run EXECUTE: did the project measurably improve?
+- Deep Run BACKLOG: did backlog quality, prioritization and executability improve without issue inflation?
 - Backlog Executor: how much high-value backlog was correctly completed with verification, low regressions and accurate issue state?
 
-When a run exposes a reusable failure mode, improve the relevant canonical workflow, model guidance or benchmark. Do not add a fourth prompt by default.
+When a run exposes a reusable failure mode, improve the relevant canonical workflow, model guidance or benchmark. Do not add another prompt by default.
