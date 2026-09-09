@@ -11,18 +11,18 @@ Three commands for real development through ChatGPT or Codex. Two maintained tem
 ## Everyday use
 
 ```text
-Prompts Deep Run BACKLOG на Ptichi. Цель — organic discovery.
+Prompts Deep Run BACKLOG на <project>. Цель — <outcome>.
 ```
 
 ```text
-Prompts Deep Run EXECUTE на Ptichi. Astra High. Работай глубоко.
+Prompts Deep Run EXECUTE на <project>. Работай глубоко.
 ```
 
 ```text
-Prompts Backlog Executor на Ptichi. Codex. Разбирай весь actionable backlog.
+Prompts Backlog Executor на <project>. Разбирай весь actionable backlog.
 ```
 
-The assistant reads this repository, resolves the actual project, fills context and constraints, then executes. You do not need to fill six fields yourself. Existing no-push, branch and deployment restrictions remain in force. Specifying Codex/Astra requests an environment/configuration; text cannot switch the active model or start an unavailable agent.
+The assistant reads this repository, resolves the actual project, fills context and constraints, then executes. You do not need to fill six fields yourself. Existing no-push, branch and deployment restrictions remain in force. Specifying a model or environment requests that configuration; text cannot switch the active model or start an unavailable agent.
 
 Use EXECUTE when direction is uncertain and changes are wanted now. Use BACKLOG when the output should be issues, not product edits. Use Executor when useful work is already defined. Do not chain workflows automatically or use a deep loop for a one-line deterministic fix.
 
@@ -41,9 +41,9 @@ Python 3.10+, standard library only. The agent supplies a UTF-8 JSON run specifi
 ```json
 {
   "PROJECT": "owner/repository (verified target)",
-  "GOAL": "Fix the reproduced onboarding failure",
-  "CONTEXT": "Use the verified branch/ref and linked reproduction; inspect current tests",
-  "AUTHORITY": "Edit and test in the existing work branch; no push, merge or deploy",
+  "GOAL": "Fix the reproduced first-value failure",
+  "CONTEXT": "Use the verified branch/ref and linked reproduction; inspect current state",
+  "AUTHORITY": "Edit and verify in the existing work branch; no push, merge or deploy",
   "CONSTRAINTS": "Preserve existing work and public API behavior",
   "DONE_WHEN": "The reproduction passes, relevant regressions are checked, and remaining gaps are reported"
 }
@@ -54,13 +54,12 @@ python3 scripts/prompts.py render deep-execute --spec /tmp/run.json
 python3 scripts/prompts.py render deep-backlog --spec /tmp/run.json
 python3 scripts/prompts.py render backlog-executor --spec /tmp/run.json
 python3 scripts/prompts.py check
-python3 -m unittest discover -s tests -v
 ```
 
 Use `--spec -` for standard input. Rendering writes only prompt text to standard output; it does not call a model, read your projects, write to GitHub or change permissions. The Deep Run renderer strips the unused mode. Unknown/missing fields and unresolved placeholders fail instead of silently producing an incomplete prompt. Do not commit private run specifications.
 
-## Evidence and upkeep
+## Supporting files
 
-[MODEL_PROFILES.md](MODEL_PROFILES.md) separates environment capabilities from model choices. [RESEARCH.md](RESEARCH.md) records source-to-design decisions. [BENCHMARKS.md](BENCHMARKS.md) defines real-run evaluation and adversarial cases.
+[MODEL_PROFILES.md](MODEL_PROFILES.md) separates environment capabilities from model choices. [RESEARCH.md](RESEARCH.md) records source-to-design decisions. Keep the repository project-neutral: do not add target-project datasets, fixtures, benchmark cases or generated run prompts containing private project context.
 
-Both v2 templates are **experimental**, not "proven strongest": structural tests cannot establish a real-world win rate. The existing benchmark issue tracks those comparisons. Keep exactly three commands unless repeated evidence justifies a genuinely different job.
+Keep exactly three commands unless repeated real use shows a genuinely different job that cannot fit the existing workflows.
