@@ -30,6 +30,14 @@ Mark generated, vendored and large output directories as **not first reads**, no
 
 Do not embed an always-changing HEAD in permanent navigation files. The session records the observed SHA. If a generated index is justified, include source hashes or a manifest digest, exclude its own output from that digest, and validate freshness before trusting it.
 
+### Website repositories
+
+Use [WEBSITE_STACKS.md](WEBSITE_STACKS.md) to distinguish the framework, rendering mode and host. During authorized setup, add only missing decision-relevant facts to the existing map: affected workspace, version source, router/generator, static export or runtime, production URL prefix, source-to-output flow, real checks and publication triggers. Link configuration/scripts as the source of truth rather than copying their changing values into a second manifest.
+
+For static sites, map a representative content/data edit through its generator to a nested public route. For Next.js, also identify the relevant router, client/server boundary and export/runtime constraints. Select a real affected route and existing verification command; do not invent a fixture suite or add Next.js tooling to a plain HTML site.
+
+Check that a fresh reader can locate the source and distinguish a build check from a deployment. Keep production and preview restrictions explicit. Normal feature work consumes this contract; it does not rerun setup or copy every profile into the target.
+
 ## 3. Make changes local and sources unambiguous
 
 Prefer readable UTF-8 source, descriptive paths, stable record IDs and deterministic formatting. Keep related behavior in coherent modules. Avoid frequently replacing one enormous minified file or a huge single-line JSON document through a connector. Split by actual domain/schema boundaries when a measured editing problem justifies it, not by arbitrary line limits.

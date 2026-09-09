@@ -60,6 +60,20 @@ This is not a heartbeat commit and does not expose chain-of-thought. On resume, 
 
 Detailed rules are in [CHATGPT_DEEP_RUN.md](CHATGPT_DEEP_RUN.md).
 
+## Website work: one command, stack-aware execution
+
+[WEBSITE_STACKS.md](WEBSITE_STACKS.md) adds a conditional adapter for static sites on GitHub Pages, Next.js static export, and Next.js runtime deployments. Pages is a host, not an alternative to the Next.js framework. The assistant resolves the actual version, router, rendering mode, host/prefix and real checks from source; you do not need a separate prompt for each combination.
+
+The guide routes a change through its source/data/template/checks, preserves generated-output and client/server boundaries, and separates production-build, route and browser evidence. It requires version-matched documentation and keeps preview publication subject to the existing deploy restrictions. It does not install a new stack, testing service or deployment pipeline.
+
+The normal commands stay unchanged. An explicit website request can be:
+
+```text
+Prompts Deep Run EXECUTE на <project>. Определи стек по репозиторию и примени WEBSITE_STACKS.md. Сохрани текущий режим сборки и ограничения на push и deploy.
+```
+
+Only the applicable sections are loaded. No website fixtures or target-project configuration are stored in this prompt library.
+
 ## Templates
 
 [Deep Run](loops/deep-run.md) and [Backlog Executor](loops/backlog-executor.md) are self-contained once filled. The agent entry point is [AGENTS.md](AGENTS.md).

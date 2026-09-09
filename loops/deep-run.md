@@ -1,12 +1,12 @@
 ---
 id: deep-run
-version: 2.3.0
+version: 2.4.0
 status: experimental
 ---
 
 # Deep Run
 
-Two outputs, one reasoning core. Use `BACKLOG` to prepare work; use `EXECUTE` to improve the project now. The agent fills inputs from live project context. See [AGENTS.md](../AGENTS.md), [GITHUB_WORKFLOW.md](../GITHUB_WORKFLOW.md), and [repository preparation](../REPOSITORY_SETUP.md) when applicable.
+Two outputs, one reasoning core. Use `BACKLOG` to prepare work; use `EXECUTE` to improve the project now. The agent fills inputs from live project context. See [AGENTS.md](../AGENTS.md), [GITHUB_WORKFLOW.md](../GITHUB_WORKFLOW.md), and [repository preparation](../REPOSITORY_SETUP.md) when applicable. For websites, read only the relevant [stack guidance](../WEBSITE_STACKS.md).
 
 ```text
 GOAL
@@ -43,6 +43,7 @@ Keep CI enabled. Reduce waste through coherent commits, targeted checks and, whe
 
 DIAGNOSE AND CHOOSE
 Inspect real code, behavior, recent changes, relevant issues/PRs and tests to locate the dominant constraint; follow evidence rather than reading everything. Use current primary sources for time-sensitive technical claims.
+For websites, resolve framework/version, router, export/runtime, host/prefix and real check commands. Preserve that contract; GitHub Pages can host Next.js exports. Edit canonical sources and verify built routes, not merely development behavior.
 Establish observable baseline and success evidence. Separate observation, hypothesis and unknown; missing analytics is not zero traffic. Identify the target user's actual problem.
 Compare materially different responses when the choice is open, including reuse, simplification and no change. Challenge the leading decision with its strongest counterargument. Run a cheap authorized test first when it could reverse an expensive decision.
 Use only perspectives that can change the decision. Delegate bounded independent work only with real subagent tools and separate ownership; otherwise label skeptical self-review honestly. Simulated users are hypotheses, not customer evidence.

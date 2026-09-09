@@ -22,6 +22,8 @@ Default ordinary “deep loop / improve” requests to EXECUTE; explicit backlog
 
 For ChatGPT Deep Run, use [CHATGPT_DEEP_RUN.md](CHATGPT_DEEP_RUN.md); do not impose that adapter on Codex. For publication, checkpoints, retries and CI, use relevant sections of [GITHUB_WORKFLOW.md](GITHUB_WORKFLOW.md). Resume by reconciling the existing checkpoint with live HEAD/diff/checks, not restarting the full audit. Keep CI enabled and shared writes serialized; no heartbeat commits or issue spam.
 
+For website work, use the selector and applicable sections of [WEBSITE_STACKS.md](WEBSITE_STACKS.md). Resolve framework/version, router, export/runtime and host separately. Consume existing source/check contracts; do not create a prompt copy or migrate the stack.
+
 For repository preparation, use [REPOSITORY_SETUP.md](REPOSITORY_SETUP.md). Normal feature work consumes the existing entry/map; setup is not a mandatory prelude to every task. For model/runtime selection, consult [MODEL_PROFILES.md](MODEL_PROFILES.md). Do not prepend the entire library to a run.
 
 ## Maintaining this library
