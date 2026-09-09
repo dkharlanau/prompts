@@ -1,7 +1,7 @@
-library_version: 1.0.0
-canonical_prompt: deep-run
-benchmark: DRS-100
-profile_version: 1.0.0
+library_version: 2.0.0
+canonical_workflows: [deep-run, backlog-builder, backlog-executor]
+benchmark: workflow-specific + DRS-100
+profile_version: 1.1.0
 model_profiles_last_verified: 2026-09-09
 
 prompts:
@@ -9,56 +9,68 @@ prompts:
     path: loops/deep-run.md
     version: 1.0.0
     status: candidate
-    use_when: substantial project, product, service, website, software, research or strategy work that benefits from a complete inspect-decide-execute-verify loop
-    avoid_when: small deterministic edit, simple factual answer, or consequential irreversible action outside granted authority
-    patterns:
-      - reality-inspection
-      - baseline-evaluation
-      - independent-perspectives
-      - dominant-bottleneck
-      - best-of-n
-      - adversarial-review
-      - pre-mortem
-      - experiment-gate
-      - execution
-      - evaluator-optimizer
-      - regression-and-entropy-check
-      - reflection
-    benchmark_target: DRS-100 >= 85 across at least 3 domains
+    job: understand and materially improve a project when direction or the dominant bottleneck is uncertain
+    use_when: substantial product, website, repository, research, architecture or strategy work benefits from inspect-decide-execute-verify iteration
+    avoid_when: small deterministic edit or the only need is backlog maintenance/execution
+    patterns: [reality-inspection, baseline, independent-perspectives, dominant-bottleneck, best-of-n, adversarial-review, experiment-gate, execution, verification, evaluator-optimizer, reflection]
+
+  - id: backlog-builder
+    path: loops/backlog-builder.md
+    version: 1.0.0
+    status: candidate
+    job: create and maintain a prioritized execution-ready GitHub control plane
+    use_when: research, product state, defects and ideas must become clean executable work
+    avoid_when: backlog is already current, prioritized and execution-ready
+    patterns: [backlog-audit, gap-analysis, evidence-gate, prioritization, dependency-shaping, issue-design, adversarial-review]
+
+  - id: backlog-executor
+    path: loops/backlog-executor.md
+    version: 1.0.0
+    status: candidate
+    job: autonomously execute actionable backlog with implementation, verification and issue synchronization
+    use_when: a usable backlog exists and a coding/product agent should keep working until no justified actionable work remains
+    avoid_when: backlog is low-quality, authority is unclear or work requires frequent irreversible human decisions
+    patterns: [state-sync, issue-triage, dependency-aware-selection, implementation, tests, ui-verification, independent-review, regression-checkpoint, control-plane-sync, continuation]
+
+routing:
+  uncertain_direction: deep-run
+  backlog_creation_or_review: backlog-builder
+  autonomous_implementation: backlog-executor
+  messy_backlog_then_build: [backlog-builder, backlog-executor]
+  full_project_cycle: [deep-run, backlog-builder, backlog-executor]
 
 model_profiles:
-  preferred_flagship:
+  hardest_end_to_end:
     model: GPT-6 Astra
     reasoning: Medium
     escalate_to: High
-    use_when: hardest end-to-end multi-step work across research, code, tools and verification
-  default_workhorse:
+  normal_deep_or_backlog_reasoning:
     model: GPT-5.6 Sol
     reasoning: High
-    escalate_to: Extra High
-    use_when: normal full Deep Run
-  bounded_subwork:
-    model: GPT-5.6 Luna
-    reasoning: Think
-    use_when: focused or repetitive sub-work; not preferred as sole final judge when stronger models are available
+  hardest_autonomous_repository_execution:
+    environment: Codex or Work
+    model: GPT-6 Astra
+    reasoning: Medium
+    escalate_to: High
+  normal_autonomous_repository_execution:
+    environment: Codex or Work
+    model: GPT-5.6 Sol
+    reasoning: High
 
-unresolved_aliases:
-  Solana:
-    status: unverified
-    note: No current official OpenAI model with this name was found as of 2026-09-09. Do not silently map it; verify exact current model label first.
+external_models:
+  policy: use the same canonical workflow first; add model-specific guidance only after benchmarking the exact model/version/settings
 
 selection_policy:
-  - use deep-run for consequential multi-step work
-  - fill project context from real sources of truth before asking the user
-  - choose model and reasoning from MODEL_PROFILES.md
+  - choose workflow by job, not by domain
+  - do not chain all workflows unless the project state requires it
+  - fill context from real sources of truth before asking the user
   - execute through verification when authorized
-  - use model-specific adapters as overlays, not cloned prompt variants
+  - keep GitHub issue state synchronized with reality
   - update model recommendations only after comparable benchmark runs
 
 refresh_triggers:
-  - new model release
+  - new model or coding-agent release
   - model rename or retirement
-  - material model behavior update
-  - reasoning-control change
-  - new official prompting guidance
+  - material behavior or reasoning-control change
+  - materially new prompting guidance
   - benchmark evidence contradicts current recommendation
