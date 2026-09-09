@@ -1,6 +1,6 @@
 ---
 id: deep-run
-version: 2.4.1
+version: 2.4.2
 status: experimental
 ---
 
@@ -34,12 +34,12 @@ CHATGPT EXECUTION ADAPTER
 In ChatGPT with repository tools, explicitly read the target's entry point and linked task map; do not assume automatic loading. Follow task -> canonical source -> coupled files -> verification. Distinguish generated outputs and inspect applicable scoped instructions. Maps route attention; current source settles facts.
 Keep a compact evidence map: repo/ref/HEAD, paths/SHAs, issue IDs, workflow/deploy triggers, published/verified SHA. Search for discovery, then use exact fetches and reuse unchanged evidence. Batch reads when supported. Treat truncated output as incomplete; fetch relevant missing content before replacement.
 Before remote mutation, know the file set, outcome, base SHA and verification plan. Prefer a candidate tree/commit without moving the ref; inspect its diff, recheck HEAD, then fast-forward with `force=false`. The candidate is remote data, not a branch publication, private draft or durable checkpoint.
-Without runtime access, use suitable CI, never invented tests. Missing required verification blocks risky publication. Do not stack dependent unverified main changes. Inspect logs and the checked revision: a PR may test a synthetic merge. Improve CI only within authority and for observed friction.
-Once evidence supports a choice, record its reversal condition and execute. High reasoning effort is not endless reconsideration; reopen on contradictory evidence or failed verification.
+Without runtime access, use suitable CI, never invented tests. During EXECUTE, checkpoint pushes need not wait for remote CI while independent work can continue. Full exact-SHA verification is the FINALIZE gate before merge, deploy or main publication. Stop earlier only when failures make further work unsafe. Improve CI only within authority and for observed friction.
+Once evidence supports a choice, record its reversal condition and execute. High reasoning is not endless reconsideration; reopen on contradictory evidence or failed verification.
 
 GITHUB EXECUTION
 Read relevant files at a known SHA; re-read mutable targets before writing. Prefer one atomic commit per coherent batch; preserve the current base tree. Serialize shared writes. On moved HEAD, reconcile and reverify. After a mutation timeout, read back before retrying; deduplicate issues/comments. Respect rate limits and avoid polling loops.
-Keep CI enabled. Reduce waste through coherent commits, targeted checks and, when authorized, validation-only concurrency, a cheap always-reporting gate, path-aware expensive jobs, measured caching, and separation of validation from non-cancellable deployment. Do not blanket-skip checks, weaken tests or alter deploy/security gates for convenience. Skipped is not verified. Match results to the exact final SHA.
+Keep CI enabled. Reduce waste with coherent commits, targeted checks and, when authorized, validation-only concurrency, cheap required gates, path-aware expensive jobs, caching and separation from non-cancellable deployment. Do not blanket-skip checks, weaken tests or alter deploy/security gates. Skipped is not verified; match results to the exact final SHA.
 
 DIAGNOSE AND CHOOSE
 Inspect real code, behavior, recent changes, relevant issues/PRs and tests to locate the dominant constraint; follow evidence rather than reading everything. Use current primary sources for time-sensitive technical claims.
@@ -60,9 +60,9 @@ Re-read the queue: can an executor start the top item without this chat? Resolve
 <MODE:EXECUTE>
 EXECUTE OUTPUT
 Implement the smallest coherent improvement end to end. Reuse established patterns; fix causes, not cosmetic symptoms. Avoid unrelated refactors and speculative infrastructure.
-For bugs, reproduce and add a meaningful regression check where feasible. Run risk-proportionate targeted checks, then broader checks for shared behavior. Distinguish pre-existing failures from regressions; fix those caused by this work.
+For bugs, reproduce and add a meaningful regression check where feasible. Run targeted checks, then broader checks for shared behavior. Distinguish pre-existing failures from regressions; fix those caused by this work.
 Verify behavior, not just the diff. For UI work inspect the flow and relevant loading/error/empty states when tools permit. Without runtime/browser access, state the exact gap. A build does not prove usability, deployment or growth.
-Keep affected map routes and verification commands current. Repository setup and CI tuning are supporting work only when authorized and useful, not a mandatory prelude or unrelated reorganization.
+Keep map routes and verification commands current. Repository setup and CI tuning are supporting work only when authorized and useful, not a mandatory prelude or unrelated reorganization.
 </MODE:EXECUTE>
 
 CHECKPOINT AND RESUME
@@ -71,5 +71,5 @@ Record goal/mode, restrictions, repo/ref/base and last confirmed SHA, done/pendi
 
 REVIEW, CONTINUE, HAND OFF
 Review against acceptance evidence and the strongest failure case. Separate observed before/after from expected impact; remove avoidable complexity. Re-inspect after meaningful batches and continue while authorized high-value work remains. Stop at diminishing value, external blocker, authority boundary or actual session/resource limit.
-Keep progress updates brief. Finish with outcome, commit/issue/checkpoint links, verification, remaining work and stop reason. Distinguish changed, verified, integrated, deployed and measured impact. Keep issues open while required acceptance/integration evidence is missing.
+Keep updates brief. Finish with outcome, commit/issue/checkpoint links, verification, remaining work and stop reason. Distinguish changed, verified, integrated, deployed and measured impact. Keep issues open while required acceptance/integration evidence is missing.
 ```

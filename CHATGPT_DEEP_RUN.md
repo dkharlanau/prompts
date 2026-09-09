@@ -41,7 +41,7 @@ Prefer a small number of information-dense reads over a tool call per question. 
 A useful default loop is:
 
 ```text
-targeted discovery -> decision lock -> candidate change -> publish -> exact-SHA verification -> next batch
+targeted discovery -> decision lock -> implement/checkpoint x N -> FINALIZE -> exact-SHA verification
 ```
 
 Before the first remote mutation, establish:
@@ -53,6 +53,8 @@ Before the first remote mutation, establish:
 - whether the write can deploy or create a preview.
 
 This is the **write barrier**. It prevents a long ChatGPT session from turning exploratory thoughts into a stream of remote commits.
+
+On an authorized isolated work branch, checkpoint pushes persist coherent progress but are not CI gates. Keep cheap targeted validation in the implementation loop. Defer full remote CI to FINALIZE unless a known failure makes further work unsafe.
 
 For ambiguous design choices, inspect enough evidence to compare materially different options, state the strongest counterargument, and identify what would reverse the decision. Once that threshold is met, execute. Do not reopen the architecture after every new detail unless a reversal condition is actually hit.
 
@@ -100,15 +102,29 @@ Do not create checkpoint-only commits. Do not store chain-of-thought, secrets or
 
 A checkpoint records confirmed state, not intended state. A timed-out write must be read back before the checkpoint says it succeeded.
 
-## 6. Treat CI as remote execution, not noise
+## 6. Treat CI as a final remote execution gate
 
-When ChatGPT has no shell/runtime, existing CI can be the strongest executable verifier available. Use it deliberately:
+When ChatGPT has no shell/runtime, existing CI can be the strongest executable verifier available. During EXECUTE on an isolated work branch, it is asynchronous evidence, not a pause after every checkpoint push.
 
-- identify which workflow/check actually validates the changed surface;
-- associate the result with the exact commit SHA;
-- do not call a skipped/cancelled/no-run state verified;
-- do not keep pushing dependent changes while the required evidence is still unknown;
-- avoid tight polling; do independent useful work instead.
+Use it deliberately:
+
+- identify which workflow/check validates the changed surface;
+- associate results with the exact commit SHA;
+- never call a skipped/cancelled/no-run state verified;
+- do not wait for or repeatedly inspect CI after routine checkpoint pushes while independent implementation can continue;
+- stop early only when a known failure means additional dependent work would be unsafe or invalid;
+- avoid tight polling.
+
+At FINALIZE:
+
+1. Review the complete diff and intended outcome.
+2. Run the available cheap/targeted validation.
+3. Push the consolidated state.
+4. Inspect the full required CI for the exact final SHA.
+5. Collect failures before fixing them where possible.
+6. Fix failures as a batch and rerun until the required checks pass.
+
+Final verification still gates merge, deploy and risky default-branch integration according to repository policy.
 
 If CI is demonstrably the bottleneck and workflow edits fit the user's repository authority, Deep Run may improve the validation loop as supporting work. Prefer durable changes such as:
 
