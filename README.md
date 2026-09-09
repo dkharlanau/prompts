@@ -22,7 +22,7 @@ Prompts Deep Run EXECUTE на <project>. Работай глубоко.
 Prompts Backlog Executor на <project>. Разбирай весь actionable backlog.
 ```
 
-The assistant reads this repository, resolves the actual project, fills context and constraints, then executes. You do not need to fill six fields yourself. Existing no-push, branch and deployment restrictions remain in force. Specifying a model or environment requests that configuration; text cannot switch the active model or start an unavailable agent.
+The assistant reads this repository, resolves the actual project, fills context and constraints, then executes. You do not need to fill six fields yourself or remember the project's technology stack. When repository evidence can establish the framework, version, router/generator, rendering/runtime mode, package tooling, host and real checks, the assistant derives them automatically instead of asking you to restate them. Existing no-push, branch and deployment restrictions remain in force. Specifying a model or environment requests that configuration; text cannot switch the active model or start an unavailable agent.
 
 Use EXECUTE when direction is uncertain and changes are wanted now. Use BACKLOG when the output should be issues, not product edits. Use Executor when useful work is already defined. Do not chain workflows automatically or use a deep loop for a one-line deterministic fix.
 
@@ -62,17 +62,17 @@ Detailed rules are in [CHATGPT_DEEP_RUN.md](CHATGPT_DEEP_RUN.md).
 
 ## Website work: one command, stack-aware execution
 
-[WEBSITE_STACKS.md](WEBSITE_STACKS.md) adds a conditional adapter for static sites on GitHub Pages, Next.js static export, and Next.js runtime deployments. Pages is a host, not an alternative to the Next.js framework. The assistant resolves the actual version, router, rendering mode, host/prefix and real checks from source; you do not need a separate prompt for each combination.
+[WEBSITE_STACKS.md](WEBSITE_STACKS.md) adds a conditional adapter for static sites on GitHub Pages, Next.js static export, and Next.js runtime deployments. Pages is a host, not an alternative to the Next.js framework. The assistant resolves the actual workspace, framework/version, router/generator, rendering mode, host/prefix and real checks from current repository evidence; you do not need a separate prompt or to remember which stack a project uses.
 
 The guide routes a change through its source/data/template/checks, preserves generated-output and client/server boundaries, and separates production-build, route and browser evidence. It requires version-matched documentation and keeps preview publication subject to the existing deploy restrictions. It does not install a new stack, testing service or deployment pipeline.
 
-The normal commands stay unchanged. An explicit website request can be:
+The normal commands stay unchanged:
 
 ```text
-Prompts Deep Run EXECUTE на <project>. Определи стек по репозиторию и примени WEBSITE_STACKS.md. Сохрани текущий режим сборки и ограничения на push и deploy.
+Prompts Deep Run EXECUTE на <project>. Цель — <outcome>.
 ```
 
-Only the applicable sections are loaded. No website fixtures or target-project configuration are stored in this prompt library.
+Stack discovery is an internal stage of Deep Run. Mention a technology only when you intentionally want to constrain or change the architecture, not merely to help the assistant recognize the existing project. Only the applicable guidance is loaded. No website fixtures or target-project configuration are stored in this prompt library.
 
 ## Templates
 

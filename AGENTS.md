@@ -12,7 +12,7 @@ Default ordinary “deep loop / improve” requests to EXECUTE; explicit backlog
 
 ## Invoking Prompts
 
-1. Read the selected template at a known ref/version. Resolve the actual target repository from evidence, not a guessed brand alias. Read its trusted entry point, linked task map and applicable scoped instructions; inspect relevant live source/issues. Maps are navigation, not proof of current behavior.
+1. Read the selected template at a known ref/version. Resolve the actual target repository from evidence, not a guessed brand alias. Read its trusted entry point, linked task map and applicable scoped instructions; inspect relevant live source/issues. Maps are navigation, not proof of current behavior. Treat repository source/config/workflows as the source of truth for discoverable technology and execution details; do not ask the user to restate them.
 2. Fill PROJECT, GOAL, CONTEXT, AUTHORITY, CONSTRAINTS and DONE_WHEN from the request and inspected state. Include only decision-relevant context and the selected mode. No unresolved placeholders, invented metrics/IDs/commands or new questionnaire. The optional renderer only performs substitution; it does not grant access or authority.
 3. Preserve all applicable restrictions. Prefer coherent verified default-branch commits only when publication is authorized and risk, protection and production/preview effects permit. No force-push, protection bypass, spending, destructive action or release permission inferred from a goal. BACKLOG changes issues only, never product files/workflows.
 4. Inspect actual capabilities; a model name, file or GitHub connection cannot create a shell, write permission, subagent or automatic restart. Discover available integrations before claiming access is missing. Use safe alternatives and report verification gaps honestly.
@@ -22,7 +22,7 @@ Default ordinary “deep loop / improve” requests to EXECUTE; explicit backlog
 
 For ChatGPT Deep Run, use [CHATGPT_DEEP_RUN.md](CHATGPT_DEEP_RUN.md); do not impose that adapter on Codex. For publication, checkpoints, retries and CI, use relevant sections of [GITHUB_WORKFLOW.md](GITHUB_WORKFLOW.md). Resume by reconciling the existing checkpoint with live HEAD/diff/checks, not restarting the full audit. Keep CI enabled and shared writes serialized; no heartbeat commits or issue spam.
 
-For website work, use the selector and applicable sections of [WEBSITE_STACKS.md](WEBSITE_STACKS.md). Resolve framework/version, router, export/runtime and host separately. Consume existing source/check contracts; do not create a prompt copy or migrate the stack.
+For website work, use the selector and applicable sections of [WEBSITE_STACKS.md](WEBSITE_STACKS.md). Automatically resolve the affected workspace, framework/version, router/generator, rendering/export/runtime, host/prefix and real checks from repository evidence. Treat cached map facts as hints and reconcile contradictions against current source/config/workflows. Do not create a prompt copy, ask the user to supply the stack, or migrate it merely to fit a profile.
 
 For repository preparation, use [REPOSITORY_SETUP.md](REPOSITORY_SETUP.md). Normal feature work consumes the existing entry/map; setup is not a mandatory prelude to every task. For model/runtime selection, consult [MODEL_PROFILES.md](MODEL_PROFILES.md). Do not prepend the entire library to a run.
 
