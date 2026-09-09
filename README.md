@@ -26,6 +26,26 @@ The assistant reads this repository, resolves the actual project, fills context 
 
 Use EXECUTE when direction is uncertain and changes are wanted now. Use BACKLOG when the output should be issues, not product edits. Use Executor when useful work is already defined. Do not chain workflows automatically or use a deep loop for a one-line deterministic fix.
 
+## ChatGPT Deep Run
+
+Deep Run now has a conditional ChatGPT execution adapter; Codex keeps its own runtime behavior.
+
+In ChatGPT, the default objective is **verified useful progress per repository-tool round-trip**. The run maintains a compact evidence map (HEAD, relevant paths/SHAs, issues, workflow/deploy triggers, last published/verified SHA), searches to discover unknown paths and then switches to exact reads. High reasoning effort should reach a decision threshold and execute rather than repeatedly reopen the architecture.
+
+For coherent multi-file changes, a write-capable ChatGPT surface should prefer a staged candidate Git commit: build the tree/commit without moving the branch, inspect the candidate diff, recheck HEAD, then fast-forward `main` with `force=false`. This reduces half-published multi-file states without requiring a branch/PR for every low-risk change.
+
+For long work, prefer one existing issue checkpoint. If no issue/state artifact exists but real commits are already being made, a coherent commit body may carry a compact fallback cursor:
+
+```text
+Agent-Run: <stable-goal-key>
+Agent-Next: <one executable next action>
+Agent-Verify: <exact SHA/check status or explicit gap>
+```
+
+This is not a heartbeat commit and does not expose chain-of-thought. On resume, ChatGPT resolves current HEAD, finds the latest checkpoint, compares changes since the recorded SHA, and continues the unfinished action instead of re-auditing the repository.
+
+Detailed rules are in [CHATGPT_DEEP_RUN.md](CHATGPT_DEEP_RUN.md).
+
 ## Templates
 
 [Deep Run](loops/deep-run.md) and [Backlog Executor](loops/backlog-executor.md) are self-contained once filled. The agent entry point is [AGENTS.md](AGENTS.md).
@@ -38,15 +58,11 @@ The templates retain deep diagnosis, alternative hypotheses, skeptical review, e
 
 **One coherent change, one publication.** Prefer atomic multi-file commits over one commit per file. Check for concurrent changes and read back writes. After a timeout, establish whether the operation already succeeded before retrying.
 
-**Checkpoints before the session ends.** For multi-batch work, keep one compact checkpoint from early in the run, update it after coherent batches and before lengthy/risky steps. Prefer an editable comment in an existing relevant issue, checking issue-triggered automation; avoid heartbeat commits. Record confirmed SHA, done/pending work, checks and next action. Resume from live state, not a fresh full audit:
+**Checkpoints before the session ends.** For multi-batch work, keep one compact checkpoint from early in the run and update it after coherent batches and before lengthy/risky steps. Do not create issues or commits solely for heartbeat state.
 
-```text
-Prompts Backlog Executor на <project>. Продолжи с последнего checkpoint.
-```
+**Lean CI, not disabled CI.** Existing CI can serve as remote verification when ChatGPT has no shell. Optimize validation only when observed friction justifies it and workflow edits are authorized: validation-only concurrency, separation from deployment, an always-reporting fast gate, path-aware expensive jobs, measured caches and justified matrix reduction. Do not toggle workflows off until the chat ends, blanket-apply `[skip ci]`, remove useful tests or treat skipped checks as passed verification.
 
-**Lean CI, not disabled CI.** Batch commits and run relevant checks. Optimize validation concurrency and expensive-job selection only when authorized. Do not toggle workflows off until the chat ends, blanket-apply `[skip ci]`, remove useful tests or treat skipped checks as passed verification. A no-deploy restriction includes automatic previews.
-
-Operational recipes and a checkpoint format are in [GITHUB_WORKFLOW.md](GITHUB_WORKFLOW.md). These are prompt rules, not an installed scheduler or repository-wide configuration change. They support a later resumed session, not automatic recovery from a crashed chat. Essential rules stay inside both copyable templates.
+Operational recipes are in [GITHUB_WORKFLOW.md](GITHUB_WORKFLOW.md). These are prompt rules, not an installed scheduler or automatic recovery service.
 
 ## Optional local renderer
 
@@ -70,7 +86,7 @@ python3 scripts/prompts.py render backlog-executor --spec /tmp/run.json
 python3 scripts/prompts.py check
 ```
 
-Use `--spec -` for standard input. Rendering writes only prompt text to standard output; it does not call a model, read your projects, write to GitHub or change permissions. The Deep Run renderer strips the unused mode. Unknown/missing fields and unresolved placeholders fail instead of silently producing an incomplete prompt. Do not commit private run specifications.
+Use `--spec -` for standard input. Rendering writes only prompt text to standard output; it does not call a model, read projects, write to GitHub or change permissions. Unknown/missing fields and unresolved placeholders fail instead of silently producing an incomplete prompt. Do not commit private run specifications.
 
 ## Supporting files
 

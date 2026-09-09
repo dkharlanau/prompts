@@ -1,5 +1,5 @@
 {
-  "library_version": "3.1.0",
+  "library_version": "3.2.0",
   "format_note": "JSON syntax is valid YAML; parsed with the Python standard library.",
   "canonical_workflows": ["deep-run", "backlog-executor"],
   "model_profiles": "MODEL_PROFILES.md",
@@ -14,7 +14,7 @@
     {
       "id": "deep-run",
       "path": "loops/deep-run.md",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "status": "experimental",
       "max_template_words": 1100
     },

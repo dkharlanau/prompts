@@ -5,6 +5,7 @@ Sources checked **2026-09-09**. These sources support mechanisms, not a claim th
 | Primary source | Relevant guidance | Library decision |
 |---|---|---|
 | [OpenAI model guidance](https://developers.openai.com/api/docs/guides/latest-model) | Explicit follow-through, instruction hygiene, purposeful delegation and proportionate verification | Infer routine details, act within authority, condition review depth on risk |
+| [Connecting GitHub to ChatGPT](https://help.openai.com/en/articles/11145903) | ChatGPT retrieves authorized repository content on demand; capabilities vary by product surface | Treat search as discovery, keep an exact SHA/path evidence map, inspect active tools instead of assuming synced state or write access |
 | [Codex prompting guide](https://developers.openai.com/cookbook/examples/gpt-5/codex_prompting_guide) | End-to-end work, preservation of existing edits, meaningful implementation and avoiding unproductive repetition | Inspect live state, protect concurrent work, verify and checkpoint rather than simulate endless progress |
 | [Codex best practices](https://developers.openai.com/codex/learn/best-practices) | Clear goals/context/constraints/completion, practical repository guidance and testing | Six filled inputs, short task-specific context, executable checks |
 | [AGENTS.md guidance](https://developers.openai.com/codex/guides/agents-md) | Repository-scoped instructions and explicit discovery of applicable guidance | Use this library as a router; inspect the target's applicable instructions rather than copying the whole library |
@@ -15,7 +16,7 @@ Sources checked **2026-09-09**. These sources support mechanisms, not a claim th
 
 At baseline `cfd120d893ed7a049402b3a36bc4464d6df24878`, the library already had strong outcome-first reasoning, backlog deduplication and continued execution. The main weaknesses found by repository review were:
 
-- A long staged Deep Run risked making every task pay for councils, tournaments and repeated analysis. v2 keeps those mechanisms conditional instead of prescribing a fixed number of alternatives or roles.
+- A long staged Deep Run risked making every task pay for councils, tournaments and repeated analysis. v2 keeps those mechanisms conditional instead of prescribing fixed alternatives or roles.
 - Agent-filled inputs had no mechanical completeness check. The optional renderer validates fields and removes the unused mode; it does not replace real context discovery.
 - Generic issue closure did not clearly distinguish a branch result from the required integration/release boundary. v2 requires that distinction.
 - Capability gaps, concurrent edits, repeated no-progress attempts and interrupted sessions needed concrete handling. v2 adds targeted rules without requiring a particular agent product.
@@ -25,13 +26,13 @@ At baseline `cfd120d893ed7a049402b3a36bc4464d6df24878`, the library already had 
 
 No mandatory multi-agent council, hidden-reasoning transcript, domain prompt clones, invented "best model" ranking, background scheduler, paid benchmark runner or self-awarded quality score. No claim that shorter text alone is better.
 
-The design hypothesis is that a shorter, capability-aware contract preserves decision quality while reducing mode confusion and unsupported completion claims. It must be tested on actual task traces, not inferred from the number of safety phrases or passing renderer tests. Keep failed-run evidence with the target project and revise only what the evidence implicates.
+The design hypothesis is that a capability-aware contract preserves decision quality while reducing mode confusion and unsupported completion claims. It must be tested on actual task traces, not inferred from safety phrases or passing renderer tests. Keep failed-run evidence with the target project and revise only what the evidence implicates.
 
 ## GitHub execution update: templates v2.1
 
 Baseline: `b3841804e49f46ee291e3cb62669c0cb1381c85a`. The owner requested lower branch/merge overhead and more recoverable ChatGPT-to-GitHub work. Main-first is this library's operating preference for authorized low-risk implementation, not a universal GitHub recommendation or permission to bypass repository policy.
 
-The update replaces end-of-session-only recovery with early per-batch checkpoints, prefers atomic publication, reconciles ambiguous writes before retries, and reduces CI waste without leaving workflows disabled. Essential rules are embedded in both templates; optional recipes live in [GITHUB_WORKFLOW.md](GITHUB_WORKFLOW.md). No new command, site fixture, benchmark workflow or background service is introduced. Existing template word budgets remain unchanged.
+The update replaced end-of-session-only recovery with early per-batch checkpoints, preferred atomic publication, reconciled ambiguous writes before retries, and reduced CI waste without leaving workflows disabled. Essential rules were embedded in both templates; optional recipes live in [GITHUB_WORKFLOW.md](GITHUB_WORKFLOW.md).
 
 | Primary source checked 2026-09-09 | Mechanism | Design consequence |
 |---|---|---|
@@ -40,4 +41,23 @@ The update replaces end-of-session-only recovery with early per-batch checkpoint
 | [Workflow concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency) | A concurrency group can cancel superseded running validation | Scope cancellation to the same validation workflow/ref; do not copy it blindly to deployment |
 | [Skip workflow runs](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs) and [job conditions](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-jobs-with-conditions) | Skipped workflows may leave required checks pending; job-level skip has different status semantics | No blanket skip tokens; preserve an always-reporting required gate and distinguish skipped from actual verification |
 
-Checkpoint cadence and main-first are design choices, not measured performance results. A saved note cannot restart ChatGPT, guarantee recovery of an unsaved edit or prove a test passed. Validate the behavior on actual authorized tasks; structural checks alone cannot establish reliability gains.
+## ChatGPT execution adapter: Deep Run v2.2
+
+Baseline: `ab349c1959636ff9f9b5f1383081a5d4630b4000`. The previous GitHub protocol was runtime-neutral. That left avoidable inefficiency in conversation-first ChatGPT runs: repeated search after paths were already known, too many connector round-trips, no explicit decision lock for high reasoning effort, and a checkpoint gap when no issue/state artifact existed.
+
+v2.2 adds a **conditional ChatGPT adapter** without creating a fourth command or changing Backlog Executor. The adapter is not a Codex prompt.
+
+Design changes:
+
+- maintain a compact session evidence map keyed by observed HEAD/path/blob SHA/issue IDs instead of repeatedly rediscovering unchanged state;
+- use repository search for discovery, then exact current reads because ChatGPT GitHub retrieval is on demand rather than a guaranteed synced repository index;
+- establish a write barrier before remote mutation;
+- when Git data tools exist, create and inspect an unreferenced candidate commit before moving `main`, giving ChatGPT a staging/review point without branch/PR overhead;
+- use `Agent-Run`, `Agent-Next`, and `Agent-Verify` commit trailers only as a fallback resume cursor on already-needed coherent commits;
+- treat existing CI as remote executable evidence when no shell exists and allow minimal measured CI-loop tuning within repository authority;
+- prevent High/Extra High reasoning from becoming repeated architecture reconsideration by recording a decision and its reversal condition;
+- resume from checkpoint + current HEAD + changes since the confirmed SHA, expanding to a fresh audit only when evidence invalidates the saved decision.
+
+The OpenAI GitHub help page documents on-demand retrieval and variable product-surface capabilities. It does not establish that every ChatGPT surface can write; the library therefore requires live capability inspection. The staged-candidate and commit-trailer mechanisms are library design choices based on Git primitives, not OpenAI product guarantees.
+
+Checkpoint cadence, main-first, staged candidate commits and CI tuning remain hypotheses about execution efficiency until validated on repeated real tasks. Structural checks cannot establish outcome gains.
