@@ -1,47 +1,62 @@
 # AGENTS.md
 
-This repository is a compact library of reusable agent loops.
+This repository provides one canonical reusable workflow: `loops/deep-run.md`.
 
 ## Core rule
 
-Do not grow the repository by adding domain-specific prompt variants. Add a new prompt only when it introduces a genuinely different loop, decision pattern or feedback mechanism.
+Do not create domain-specific prompt variants. Product, service, website, repository, growth, architecture and research work should use the same Deep Run with different inputs and evidence.
+
+A new prompt file is justified only if repeated benchmark evidence shows a fundamentally different workflow is required and cannot be expressed as an optional Deep Run phase. The default response to a new failure pattern is to improve `deep-run.md`, not to add another prompt.
 
 ## When asked to use this library
 
-1. Read `README.md` and inspect the available loop metadata.
-2. Select the **simplest loop that matches the current goal**.
-3. Fill placeholders from the target project's real context. Do not ask for values that can be resolved by inspecting the target repository, product, issues, analytics or prior project context.
-4. Execute the instantiated prompt against the target project; do not merely return the filled template unless the user asked for the prompt itself.
-5. Respect the target project's authority and deployment constraints.
-6. When useful, compose loops deliberately rather than merging them into a giant prompt. Example: `council` for decision discovery → `experiment` for uncertainty → `evaluator-optimizer` for refinement.
-7. Do not claim a benchmark result unless the benchmark was actually run and observable evidence was recorded.
+1. Read `loops/deep-run.md` and `MODEL_PROFILES.md`.
+2. Inspect the target project's real context before asking for missing inputs.
+3. Fill known placeholders from the target repository, current conversation, issues, product, analytics, tests and other sources of truth.
+4. Infer only routine details. Ask only for consequential/irreversible information that cannot be resolved from available context.
+5. Execute the instantiated Deep Run against the target project. Do not merely return the filled prompt unless the user explicitly asks for prompt text.
+6. Carry the loop through implementation and verification when authority/tools permit. Do not stop after analysis or planning.
+7. Respect deployment, merge, publishing and other irreversible-action constraints from the target project/user.
+8. Preserve the same success evidence across before/after evaluation.
+9. Stop when marginal value becomes low, the goal is met, external evidence is required, or the next consequential action is outside authority.
 
-## Selection guide
+## Model selection
 
-- Continuous project improvement → `autonomous-improvement`
-- Ambiguous decision requiring multiple perspectives → `council`
-- Several plausible directions → `best-of-n`
-- Expensive or suspicious proposal → `adversarial-decision`
-- Existing artifact needs measurable refinement → `evaluator-optimizer`
-- Decision blocked by uncertainty → `experiment`
-- Acquisition/activation/return journey → `discovery-to-value`
-- Repository drift/duplication/stale knowledge → `repository-gardening`
+Use `MODEL_PROFILES.md` as the current source of truth.
 
-## Prompt authoring contract
+Default order for a substantial Deep Run when available:
 
-Every loop file should remain generic and contain:
+1. GPT-6 Astra Medium for hardest end-to-end work.
+2. GPT-6 Astra High when the task is unusually difficult, ambiguous or consequential, or Medium materially underperformed.
+3. GPT-5.6 Sol High as the default full-run workhorse.
+4. GPT-5.6 Sol Extra High for especially difficult one-off runs when available.
+5. GPT-5.6 Luna/Think for bounded sub-work or lower-capability baseline, not as the preferred sole final evaluator when stronger models are available.
 
-- YAML metadata;
-- explicit inputs/placeholders;
-- a repeatable feedback loop;
-- verification;
-- stop condition;
-- expected output.
+Do not assume that maximum reasoning effort is always superior. Prefer benchmarked model×effort combinations.
 
-Prefer outcome-driven language. Avoid model-specific tricks unless evidence shows they are necessary.
+If the user names a model not recognized in current verified profiles, check current official model documentation before inventing behavior or mapping names.
 
-## Evaluation
+## How to interpret user shorthand
 
-Use `BENCHMARKS.md` for internal evaluation. New loops start as `experimental` or `candidate`; promote to `stable` only after recorded cross-domain evaluation.
+Examples:
 
-Use `RESEARCH.md` for research provenance. Research should explain why a pattern is plausible, not be used as decorative authority.
+- `Use Prompts for Ptichi and run deep` → instantiate and execute `deep-run.md` with Ptichi's current project context.
+- `Pick the best prompt for this repo` → use Deep Run unless the task is too small to justify it.
+- `Run another loop` → re-run Deep Run from the project's changed current state, not from the previous plan.
+- `Use the Astra version` → use the same Deep Run plus the Astra adapter from `MODEL_PROFILES.md`.
+- `Use Sol` → use the same Deep Run plus the Sol guidance from `MODEL_PROFILES.md`.
+
+## Evaluation contract
+
+Use `BENCHMARKS.md` when evaluating the prompt or a model profile.
+
+Never claim that a model, reasoning effort or prompt version is better because it sounds stronger or because vendor documentation says it is more capable. Record comparable runs against observable outcomes.
+
+When a real run exposes a reusable failure mode, decide whether to:
+
+- improve the canonical prompt;
+- improve model guidance;
+- improve the benchmark;
+- or leave it project-specific.
+
+Do not preserve ephemeral reasoning as repository documentation.
