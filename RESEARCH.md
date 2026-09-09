@@ -61,3 +61,16 @@ Design changes:
 The OpenAI GitHub help page documents on-demand retrieval and variable product-surface capabilities. It does not establish that every ChatGPT surface can write; the library therefore requires live capability inspection. The staged-candidate and commit-trailer mechanisms are library design choices based on Git primitives, not OpenAI product guarantees.
 
 Checkpoint cadence, main-first, staged candidate commits and CI tuning remain hypotheses about execution efficiency until validated on repeated real tasks. Structural checks cannot establish outcome gains.
+
+
+## Repository-side preparation: Deep Run v2.3
+
+Baseline: `556455fca4014bb3ca5c8ad89719ade3583c98fb`. The owner asked to prepare repository structure for the ChatGPT app, not only to add model instructions. The library had runtime guides but no compact task-to-source map, and no version-controlled validation workflow at this baseline.
+
+[REPOSITORY_SETUP.md](REPOSITORY_SETUP.md) defines a minimal explicit entry point, task map, canonical/generated source boundary, real check contract, connector-readable CI output and resumable state. [REPO_MAP.md](REPO_MAP.md) applies that navigation to this library. The entry point is shortened rather than duplicating the new guide. Deep Run reads existing target navigation first; ordinary feature work does not automatically become setup work. Backlog Executor remains unchanged.
+
+The new [prompt-only workflow](.github/workflows/prompts-check.yml) closes a missing remote structural-check path; it is not a measured CI speed optimization. It runs the existing standard-library validator, keeps one read-only validation job, pins checkout, does not persist checkout credentials, reports the actual revision to stdout and a job summary, and preserves command failures. No site fixtures, paid model runner, deployment, arbitrary-command dispatcher or new user command is introduced. Installing YAML and a local shell test are not evidence of a successful hosted run.
+
+Sources checked 2026-09-09: [OpenAI GitHub access](https://help.openai.com/en/articles/11145903-connecting-github-to-chatgpt) documents on-demand retrieval and describes the standard app as read-only; actual exposed tools determine this session's write capabilities. [AGENTS.md documentation](https://developers.openai.com/codex/guides/agents-md) specifies automatic discovery for Codex, not a guarantee for ordinary ChatGPT connector chat. [Contents](https://docs.github.com/en/rest/repos/contents) and [trees](https://docs.github.com/en/rest/git/trees) have retrieval/truncation boundaries. [Job summaries](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#adding-a-job-summary) complement logs, while [checkout](https://github.com/actions/checkout) documents event-specific revisions. [Secure use](https://docs.github.com/en/actions/reference/security/secure-use) supports least privilege, immutable pins and avoiding untrusted privileged execution.
+
+Task maps, source-first edits and minimal navigation are engineering choices, not new ChatGPT platform features. Check map routes and command failure behavior locally; measure discovery effort and real task outcomes before claiming improvement. A larger guide or a passing structural check alone cannot prove faster or better model work.

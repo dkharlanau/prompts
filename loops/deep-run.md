@@ -1,12 +1,12 @@
 ---
 id: deep-run
-version: 2.2.0
+version: 2.3.0
 status: experimental
 ---
 
 # Deep Run
 
-Two outputs, one reasoning core. Use `BACKLOG` to prepare work; use `EXECUTE` to improve the project now. The agent fills inputs from live project context. See [AGENTS.md](../AGENTS.md), [GITHUB_WORKFLOW.md](../GITHUB_WORKFLOW.md), and the ChatGPT adapter when applicable.
+Two outputs, one reasoning core. Use `BACKLOG` to prepare work; use `EXECUTE` to improve the project now. The agent fills inputs from live project context. See [AGENTS.md](../AGENTS.md), [GITHUB_WORKFLOW.md](../GITHUB_WORKFLOW.md), and [repository preparation](../REPOSITORY_SETUP.md) when applicable.
 
 ```text
 GOAL
@@ -31,10 +31,11 @@ Confirm repository/ref, trusted project instructions, actual tools and permissio
 For authorized implementation, prefer main-first: small coherent verified batches on the verified default branch unless branch policy, protection, risk or deployment constraints require isolation. Reuse a permitted work branch when needed; no branch per microtask, force-push or protection bypass. Honor no-push/no-merge/no-deploy separately; inspect production and preview triggers before remote writes.
 
 CHATGPT EXECUTION ADAPTER
-When the active surface is ChatGPT rather than a coding checkout, optimize verified progress per tool round-trip. Build a compact evidence map: repo/default branch/HEAD, applicable instructions, relevant paths with observed SHAs, issue IDs, workflow/deploy triggers, last published and last verified SHA. Search to discover unknown paths; after discovery use exact fetches and reuse unchanged evidence. Batch independent reads when supported and avoid a tool call per thought.
-Before a remote mutation, cross a write barrier: know the intended file set, expected outcome, base SHA and verification plan. For multi-file writes, prefer Git data primitives to create a candidate tree/commit without moving the ref, inspect its diff, recheck HEAD, then fast-forward with `force=false`. The candidate is not published or a durable checkpoint.
-Without shell/runtime access, never invent tests. Use existing CI/checks as remote verification when suitable. Publish one coherent batch, verify the exact SHA, and do not stack dependent unverified changes on main. If CI itself is a measured bottleneck and workflow edits are within authority, improve the validation loop minimally while preserving deploy/security gates; never disable CI just for the session.
-High reasoning effort must not become endless reconsideration. Once evidence supports a choice, record the decision and reversal condition, execute it, and reopen only on contradictory evidence or failed verification.
+In ChatGPT with repository tools, explicitly read the target's entry point and linked task map; do not assume automatic loading. Follow task -> canonical source -> coupled files -> verification. Distinguish generated outputs and inspect applicable scoped instructions. Maps route attention; current source settles facts.
+Keep a compact evidence map: repo/ref/HEAD, paths/SHAs, issue IDs, workflow/deploy triggers, published/verified SHA. Search for discovery, then use exact fetches and reuse unchanged evidence. Batch reads when supported. Treat truncated output as incomplete; fetch relevant missing content before replacement.
+Before remote mutation, know the file set, outcome, base SHA and verification plan. Prefer a candidate tree/commit without moving the ref; inspect its diff, recheck HEAD, then fast-forward with `force=false`. The candidate is remote data, not a branch publication, private draft or durable checkpoint.
+Without runtime access, use suitable CI, never invented tests. Missing required verification blocks risky publication. Do not stack dependent unverified main changes. Inspect logs and the checked revision: a PR may test a synthetic merge. Improve CI only within authority and for observed friction.
+Once evidence supports a choice, record its reversal condition and execute. High reasoning effort is not endless reconsideration; reopen on contradictory evidence or failed verification.
 
 GITHUB EXECUTION
 Read relevant files at a known SHA; re-read mutable targets before writing. Prefer one atomic commit per coherent batch; preserve the current base tree. Serialize shared writes. On moved HEAD, reconcile and reverify. After a mutation timeout, read back before retrying; deduplicate issues/comments. Respect rate limits and avoid polling loops.
@@ -60,7 +61,7 @@ EXECUTE OUTPUT
 Implement the smallest coherent improvement end to end. Reuse established patterns; fix causes, not cosmetic symptoms. Avoid unrelated refactors and speculative infrastructure.
 For bugs, reproduce and add a meaningful regression check where feasible. Run risk-proportionate targeted checks, then broader checks for shared behavior. Distinguish pre-existing failures from regressions; fix those caused by this work.
 Verify behavior, not just the diff. For UI work inspect the flow and relevant loading/error/empty states when tools permit. Without runtime/browser access, state the exact gap. A build does not prove usability, deployment or growth.
-CI/workflow tuning is supporting work, not a separate hobby: change it only when observed friction materially slows or weakens safe execution and the change fits authority. Prefer durable developer-loop improvements over temporary toggles.
+Keep affected map routes and verification commands current. Repository setup and CI tuning are supporting work only when authorized and useful, not a mandatory prelude or unrelated reorganization.
 </MODE:EXECUTE>
 
 CHECKPOINT AND RESUME

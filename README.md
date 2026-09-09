@@ -26,6 +26,20 @@ The assistant reads this repository, resolves the actual project, fills context 
 
 Use EXECUTE when direction is uncertain and changes are wanted now. Use BACKLOG when the output should be issues, not product edits. Use Executor when useful work is already defined. Do not chain workflows automatically or use a deep loop for a one-line deterministic fix.
 
+## Prepare the repository, not just the prompt
+
+Start with [AGENTS.md](AGENTS.md) and [REPO_MAP.md](REPO_MAP.md) for this library. The map routes a task to its source files, coupled changes, real checks and resume location. Do not read every supporting guide on every run.
+
+[REPOSITORY_SETUP.md](REPOSITORY_SETUP.md) explains how to prepare another repository for ChatGPT app + GitHub work: explicit entry-point loading, a small task map, canonical versus generated sources, executable checks, readable CI evidence and resumable state. Reuse existing conventions; no extra manifest or fourth command is required.
+
+```text
+Prompts Deep Run EXECUTE на <project>. Подготовь репозиторий для работы из ChatGPT через GitHub по REPOSITORY_SETUP.md. Сохрани ограничения на push и deploy.
+```
+
+This request applies to the named target only. Normal feature runs consume its map rather than reorganize the repository. A file named AGENTS.md does not itself configure the ChatGPT app or grant tools access.
+
+The [prompt-only CI workflow](.github/workflows/prompts-check.yml) runs the existing structural check on main pushes, PRs and manual dispatch. It prints the checked revision and diagnostics to logs and a summary. One job, no site tests, model calls, dependency installation or deployment; actual run status must still be inspected.
+
 ## ChatGPT Deep Run
 
 Deep Run now has a conditional ChatGPT execution adapter; Codex keeps its own runtime behavior.

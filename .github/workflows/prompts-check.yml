@@ -1,0 +1,44 @@
+name: Prompt library checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Validation only: never copy cancellation to deployment/migration workflows.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prompt-check:
+    name: Prompt structure
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out the event revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Validate prompts and report the checked revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          revision="$(git rev-parse HEAD)"
+          report="$RUNNER_TEMP/prompts-check.txt"
+          status=0
+          python3 scripts/prompts.py check >"$report" 2>&1 || status=$?
+          printf 'Checked revision: %s\nEvent: %s\n' "$revision" "$GITHUB_EVENT_NAME"
+          cat "$report"
+          {
+            printf '## Prompt library checks\n\n'
+            printf 'Checked revision: `%s`\n\nEvent: `%s`\n\n' "$revision" "$GITHUB_EVENT_NAME"
+            printf 'Exit status: `%s`\n\n```text\n' "$status"
+            cat "$report"
+            printf '\n```\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"

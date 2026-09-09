@@ -8,6 +8,12 @@ Maximize **verified useful progress per tool round-trip** while leaving GitHub i
 
 The active tool surface is authoritative. A GitHub connection alone does not imply write access, shell access, browser/runtime verification or CI control. Inspect the tools and permissions actually exposed.
 
+## Use the repository's prepared entry point
+
+Explicitly fetch the target's root entry point and linked task map at the observed ref. These files are not assumed to auto-load in the ChatGPT app. Route the task to canonical source, coupled files and actual verification; inspect scoped instructions before editing. Do not edit generated output as a substitute for its source or trust a stale map over live code.
+
+For repository preparation, use [REPOSITORY_SETUP.md](REPOSITORY_SETUP.md). Normal runs reuse existing navigation, not install new scaffolding. Update an affected stale route with the relevant change. Truncated reads are incomplete evidence. For CI, read concise logs and the actual checked revision; a PR merge revision is not identical to its head. A UI summary or downloadable artifact may not be exposed by the active connector.
+
 ## 1. Build an evidence map once
 
 At the start of substantial work, resolve and retain a compact session map:
@@ -62,7 +68,7 @@ For a coherent multi-file change, prefer a two-phase Git publication:
 6. If moved, rebuild/reconcile on the new base; never force the old candidate over intervening work.
 7. Read back the published commit and verify that exact SHA.
 
-This gives ChatGPT a lightweight staging area without branch/PR overhead. The unreferenced candidate is not published, not CI-verified, and not a durable session checkpoint.
+This gives ChatGPT a lightweight staging area without branch/PR overhead. Creating the candidate is still a remote write: it may be addressable by SHA and is not a private draft. It is not yet on the branch, not CI-verified, and not a durable session checkpoint.
 
 When only per-file remote writes exist, serialize them and ensure intermediate repository states remain valid. If that cannot be guaranteed, use an authorized work branch rather than leaving `main` half-migrated.
 
