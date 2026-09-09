@@ -32,7 +32,21 @@ Use EXECUTE when direction is uncertain and changes are wanted now. Use BACKLOG 
 
 The templates retain deep diagnosis, alternative hypotheses, skeptical review, experiments and iteration, but activate these only when they can affect the decision. They require real capability checks, preserve concurrent work and distinguish a branch fix from merged code, deployment and measured impact. A simulated user is not customer research; a green build is not proof of a useful product.
 
-For long work, the agent checkpoints repo/ref/SHA, constraints, issue state, verification and the next action. This supports a later resumed session; it is not background scheduling.
+## GitHub working defaults
+
+**Main-first, not main-at-any-cost.** When implementation publication is authorized, prefer small verified batches on the actual default branch. Keep explicit branch/no-push/no-deploy restrictions and protection intact. Reuse a permitted work branch when necessary; do not create one per microtask.
+
+**One coherent change, one publication.** Prefer atomic multi-file commits over one commit per file. Check for concurrent changes and read back writes. After a timeout, establish whether the operation already succeeded before retrying.
+
+**Checkpoints before the session ends.** For multi-batch work, keep one compact checkpoint from early in the run, update it after coherent batches and before lengthy/risky steps. Prefer an editable comment in an existing relevant issue, checking issue-triggered automation; avoid heartbeat commits. Record confirmed SHA, done/pending work, checks and next action. Resume from live state, not a fresh full audit:
+
+```text
+Prompts Backlog Executor на <project>. Продолжи с последнего checkpoint.
+```
+
+**Lean CI, not disabled CI.** Batch commits and run relevant checks. Optimize validation concurrency and expensive-job selection only when authorized. Do not toggle workflows off until the chat ends, blanket-apply `[skip ci]`, remove useful tests or treat skipped checks as passed verification. A no-deploy restriction includes automatic previews.
+
+Operational recipes and a checkpoint format are in [GITHUB_WORKFLOW.md](GITHUB_WORKFLOW.md). These are prompt rules, not an installed scheduler or repository-wide configuration change. They support a later resumed session, not automatic recovery from a crashed chat. Essential rules stay inside both copyable templates.
 
 ## Optional local renderer
 

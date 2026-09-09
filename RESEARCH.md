@@ -25,4 +25,19 @@ At baseline `cfd120d893ed7a049402b3a36bc4464d6df24878`, the library already had 
 
 No mandatory multi-agent council, hidden-reasoning transcript, domain prompt clones, invented "best model" ranking, background scheduler, paid benchmark runner or self-awarded quality score. No claim that shorter text alone is better.
 
-The design hypothesis is that a shorter, capability-aware contract preserves decision quality while reducing mode confusion and unsupported completion claims. It must be tested on actual task traces, not inferred from the number of safety phrases or passing renderer tests. Keep failed runs as evaluation cases and revise only what the evidence implicates.
+The design hypothesis is that a shorter, capability-aware contract preserves decision quality while reducing mode confusion and unsupported completion claims. It must be tested on actual task traces, not inferred from the number of safety phrases or passing renderer tests. Keep failed-run evidence with the target project and revise only what the evidence implicates.
+
+## GitHub execution update: templates v2.1
+
+Baseline: `b3841804e49f46ee291e3cb62669c0cb1381c85a`. The owner requested lower branch/merge overhead and more recoverable ChatGPT-to-GitHub work. Main-first is this library's operating preference for authorized low-risk implementation, not a universal GitHub recommendation or permission to bypass repository policy.
+
+The update replaces end-of-session-only recovery with early per-batch checkpoints, prefers atomic publication, reconciles ambiguous writes before retries, and reduces CI waste without leaving workflows disabled. Essential rules are embedded in both templates; optional recipes live in [GITHUB_WORKFLOW.md](GITHUB_WORKFLOW.md). No new command, site fixture, benchmark workflow or background service is introduced. Existing template word budgets remain unchanged.
+
+| Primary source checked 2026-09-09 | Mechanism | Design consequence |
+|---|---|---|
+| [Git trees](https://docs.github.com/en/rest/git/trees) and [references](https://docs.github.com/en/rest/git/refs) | Multiple file entries can share a tree/commit; a non-forced ref update requires a fast-forward | Preserve the current base tree, publish coherent batches atomically, reconcile moved HEAD instead of forcing |
+| [REST API best practices](https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api) | Avoid excessive polling/concurrent calls, handle rate limits, reuse conditional reads | Targeted SHA-based reads, serialized writes, bounded retries and explicit mutation read-back |
+| [Workflow concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency) | A concurrency group can cancel superseded running validation | Scope cancellation to the same validation workflow/ref; do not copy it blindly to deployment |
+| [Skip workflow runs](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs) and [job conditions](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-jobs-with-conditions) | Skipped workflows may leave required checks pending; job-level skip has different status semantics | No blanket skip tokens; preserve an always-reporting required gate and distinguish skipped from actual verification |
+
+Checkpoint cadence and main-first are design choices, not measured performance results. A saved note cannot restart ChatGPT, guarantee recovery of an unsaved edit or prove a test passed. Validate the behavior on actual authorized tasks; structural checks alone cannot establish reliability gains.

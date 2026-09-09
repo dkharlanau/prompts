@@ -10,7 +10,7 @@ Choose the execution environment before the model. A capable model with no repos
 |---|---|---|
 | ChatGPT with repository read/write connectors | Inspect, maintain issues, edit permitted files, review diffs | Do not claim local tests/browser checks unless tools actually ran them |
 | ChatGPT with local execution/browser tools | Direct implementation and relevant runtime/UI verification | Check network, dependencies, write scope and runtime availability |
-| Codex with checkout, shell and tests | Sustained implementation; isolated work; executable verification | Check actual issue/browser/network access rather than assuming it |
+| Codex with checkout, shell and tests | Sustained implementation; executable verification | Check actual issue/browser/network access rather than assuming it |
 | Read-only session | Diagnosis, grounded proposals and unapplied patches | No claim of committed changes or updated issues |
 
 Use all three commands in any environment that can satisfy their requirements. Backlog Executor is not a promise that ChatGPT launches Codex. If the runtime cannot do the next step, use available safe alternatives or produce a precise handoff.
@@ -31,7 +31,7 @@ Compaction, persistence and scheduling depend on the runtime. The template's che
 
 ## Refresh rule
 
-When official guidance or an actual failure changes the decision: verify the current primary source, propose the smallest prompt/configuration change, compare frozen tasks under [BENCHMARKS.md](BENCHMARKS.md), and retain it only with useful evidence. Do not copy a vendor's entire agent system prompt into a task prompt.
+When official guidance or an actual failure changes the decision: verify the current primary source, propose the smallest prompt/configuration change, compare before/after on authorized real tasks, and retain it only with useful evidence. Keep target-project evaluation evidence in that project, not this prompt library; see [RESEARCH.md](RESEARCH.md). Do not copy a vendor's entire agent system prompt into a task prompt.
 
 Sources:
 - [Current model guidance](https://developers.openai.com/api/docs/guides/latest-model)
