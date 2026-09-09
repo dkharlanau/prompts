@@ -1,73 +1,64 @@
-library_version: 0.1.0
-selection_policy: simplest_sufficient_loop
-benchmark: PLS-100
+library_version: 1.0.0
+canonical_prompt: deep-run
+benchmark: DRS-100
+profile_version: 1.0.0
+model_profiles_last_verified: 2026-09-09
+
 prompts:
-  - id: autonomous-improvement
-    path: loops/autonomous-improvement.md
+  - id: deep-run
+    path: loops/deep-run.md
+    version: 1.0.0
     status: candidate
-    use_when: continuous improvement with authority to inspect, change and verify
-    avoid_when: small deterministic edit
-    patterns: [orchestrator-workers, evaluator-optimizer, reflection]
-    complements: [experiment, evaluator-optimizer, repository-gardening]
+    use_when: substantial project, product, service, website, software, research or strategy work that benefits from a complete inspect-decide-execute-verify loop
+    avoid_when: small deterministic edit, simple factual answer, or consequential irreversible action outside granted authority
+    patterns:
+      - reality-inspection
+      - baseline-evaluation
+      - independent-perspectives
+      - dominant-bottleneck
+      - best-of-n
+      - adversarial-review
+      - pre-mortem
+      - experiment-gate
+      - execution
+      - evaluator-optimizer
+      - regression-and-entropy-check
+      - reflection
+    benchmark_target: DRS-100 >= 85 across at least 3 domains
 
-  - id: council
-    path: loops/council.md
-    status: candidate
-    use_when: important ambiguous decision benefits from independent perspectives
-    avoid_when: evidence already supports a clear low-risk action
-    patterns: [parallelization, adversarial-synthesis]
-    complements: [best-of-n, experiment, adversarial-decision]
+model_profiles:
+  preferred_flagship:
+    model: GPT-6 Astra
+    reasoning: Medium
+    escalate_to: High
+    use_when: hardest end-to-end multi-step work across research, code, tools and verification
+  default_workhorse:
+    model: GPT-5.6 Sol
+    reasoning: High
+    escalate_to: Extra High
+    use_when: normal full Deep Run
+  bounded_subwork:
+    model: GPT-5.6 Luna
+    reasoning: Think
+    use_when: focused or repetitive sub-work; not preferred as sole final judge when stronger models are available
 
-  - id: best-of-n
-    path: loops/best-of-n.md
-    status: candidate
-    use_when: several fundamentally different solutions are plausible
-    avoid_when: narrow or deterministic solution space
-    patterns: [parallelization, tournament-evaluation]
-    complements: [adversarial-decision, experiment]
+unresolved_aliases:
+  Solana:
+    status: unverified
+    note: No current official OpenAI model with this name was found as of 2026-09-09. Do not silently map it; verify exact current model label first.
 
-  - id: adversarial-decision
-    path: loops/adversarial-decision.md
-    status: candidate
-    use_when: proposal is costly, consequential or at risk of feature inflation
-    avoid_when: trivial reversible change with strong evidence
-    patterns: [red-team, pre-mortem, evidence-gate]
-    complements: [experiment, best-of-n]
+selection_policy:
+  - use deep-run for consequential multi-step work
+  - fill project context from real sources of truth before asking the user
+  - choose model and reasoning from MODEL_PROFILES.md
+  - execute through verification when authorized
+  - use model-specific adapters as overlays, not cloned prompt variants
+  - update model recommendations only after comparable benchmark runs
 
-  - id: evaluator-optimizer
-    path: loops/evaluator-optimizer.md
-    status: candidate
-    use_when: an existing artifact can be improved against explicit quality criteria
-    avoid_when: no meaningful rubric or feedback signal exists
-    patterns: [evaluator-optimizer, self-refinement]
-    complements: [autonomous-improvement]
-
-  - id: experiment
-    path: loops/experiment.md
-    status: candidate
-    use_when: a decision is blocked by uncertainty that can be reduced with observable evidence
-    avoid_when: existing evidence already resolves the uncertainty
-    patterns: [hypothesis-test-learn, reflection]
-    complements: [council, adversarial-decision, autonomous-improvement]
-
-  - id: discovery-to-value
-    path: loops/discovery-to-value.md
-    status: candidate
-    use_when: product or service must improve discovery, activation, first value or continuation
-    avoid_when: acquisition and activation are unrelated to the current goal
-    patterns: [journey-simulation, bottleneck-optimization, evaluator-optimizer]
-    complements: [experiment, evaluator-optimizer]
-
-  - id: repository-gardening
-    path: loops/repository-gardening.md
-    status: candidate
-    use_when: repository has accumulated duplication, stale knowledge or architectural drift
-    avoid_when: repository is fresh and low-entropy
-    patterns: [inspect-simplify-verify-repeat]
-    complements: [autonomous-improvement]
-
-composition_examples:
-  product_direction: [council, best-of-n, adversarial-decision, experiment]
-  continuous_product_work: [autonomous-improvement, evaluator-optimizer]
-  growth_and_activation: [discovery-to-value, experiment, evaluator-optimizer]
-  repository_health: [repository-gardening, autonomous-improvement]
+refresh_triggers:
+  - new model release
+  - model rename or retirement
+  - material model behavior update
+  - reasoning-control change
+  - new official prompting guidance
+  - benchmark evidence contradicts current recommendation
