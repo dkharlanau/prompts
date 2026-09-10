@@ -3,7 +3,7 @@
   "format_note": "JSON syntax is valid YAML; parsed with the Python standard library.",
   "canonical_workflows": ["deep-run", "backlog-executor"],
   "model_profiles": "MODEL_PROFILES.md",
-  "model_guidance_checked": "2026-09-09",
+  "model_guidance_checked": "2026-09-10",
   "fields": ["PROJECT", "GOAL", "CONTEXT", "AUTHORITY", "CONSTRAINTS", "DONE_WHEN"],
   "commands": {
     "deep-backlog": {"workflow": "deep-run", "mode": "BACKLOG"},
