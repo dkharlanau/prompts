@@ -1,6 +1,6 @@
 # Model and environment profiles
 
-Official guidance checked: **2026-09-09**. Local model rankings: **unbenchmarked**.
+Official guidance checked: **2026-09-10**. Local model rankings: **unbenchmarked**.
 
 Choose the execution environment before the model. A capable model with repository tools but no shell/runtime cannot provide the same evidence as a coding checkout. Prompt text cannot change the active model, reasoning setting, sandbox, subscription or tools.
 
@@ -17,6 +17,20 @@ Choose the execution environment before the model. A capable model with reposito
 The same Deep Run command can route across these environments, but its runtime adapter is conditional. When it is actually running in ChatGPT, use [CHATGPT_DEEP_RUN.md](CHATGPT_DEEP_RUN.md). Do not impose that adapter on Codex merely because GitHub is involved.
 
 OpenAI currently documents ChatGPT GitHub retrieval as on-demand rather than a guaranteed synchronized repository index, and says capabilities can vary by product surface. Therefore discover unknown paths with search, then use exact current reads and inspect the active tool permissions before assuming writes. A GitHub connection label is not proof of write access.
+
+## Current Work / Codex environment facts
+
+OpenAI's Work/Codex guidance was updated on **2026-09-10** and materially changes environment selection details relevant to long autonomous runs:
+
+- GPT-6 Pro, powered by GPT-6 Astra, is available in ChatGPT for Pro $100, Pro $200, Business and Enterprise; Plus includes GPT-6 Astra in Work and Codex as rollout permits.
+- Astra in Codex requires **Codex CLI 0.153.0 or newer**. The latest ChatGPT Desktop app is also required for current Astra availability in desktop Work/Codex surfaces.
+- Work is designed for longer multi-step work and finished deliverables; Codex remains the software-development surface for repository, terminal, test and debugging work.
+- Work can run in the cloud on web/mobile and in supported desktop configurations. Codex remains a separate desktop experience; supported remote Codex chats can be accessed from mobile, but Codex is not itself selectable on web/mobile.
+- Workspace administrators can set the starting model, reasoning level, speed and Fast Mode availability for Work & Codex independently from ordinary Chat defaults.
+
+Treat these as environment capabilities, **not** as evidence that Astra is the best configuration for Deep Run or Backlog Executor. Exact model × reasoning × environment choices remain unbenchmarked until compared on authorized real tasks.
+
+For API/custom-harness use, OpenAI currently documents GPT-6 Astra reasoning efforts `low`, `medium`, `high`, `xhigh`, and `max`. The Responses API also supports long-running controls such as async tool calling, mid-turn steering and changing reasoning effort during a conversation. These are candidate execution controls, not defaults for this library; benchmark them before adopting a workflow-specific recommendation.
 
 ## Reasoning effort
 
@@ -39,5 +53,8 @@ When official guidance or an actual failure changes the decision: verify the cur
 Sources:
 - [Connecting GitHub to ChatGPT](https://help.openai.com/en/articles/11145903)
 - [Current model guidance](https://developers.openai.com/api/docs/guides/latest-model)
+- [GPT-6 Astra model](https://developers.openai.com/api/docs/models/gpt-6-astra)
+- [ChatGPT Work and Codex](https://help.openai.com/en/articles/20001275/)
+- [OpenAI release notes](https://openai.com/products/release-notes/)
 - [Codex best practices](https://developers.openai.com/codex/learn/best-practices)
 - [Codex prompting guide](https://developers.openai.com/cookbook/examples/gpt-5/codex_prompting_guide)
