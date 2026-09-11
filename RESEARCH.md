@@ -84,3 +84,23 @@ The [Pages documentation](https://docs.github.com/en/pages/getting-started-with-
 The canonical prompt gains a 31-word website contract, remaining at 1097/1100 template words without increasing its budget. Detailed profiles load only when relevant. Three commands, six inputs, BACKLOG's issue-only scope, publication restrictions and the unchanged Backlog Executor remain intact. No site tests, project configuration, new CI, dependency or deploy integration is added here.
 
 Review selection against static HTML, Next.js export, runtime, mixed-workspace and unavailable-runtime cases. Structural rendering/link checks are not empirical proof that an agent selected correctly or that websites improved. Actual task failures and before/after evidence belong in the target repositories; revise the shared adapter only when repeated evidence warrants it.
+
+## Writing and article adapter: Deep Run v2.5
+
+Baseline: `f925bc5d8ed3c75606162af74f69e18a62a7c6cf`. The owner wanted reusable article guidance that combines rigorous editing, natural multilingual terminology and search-friendly semantic clarity without making every page look like the same SEO template.
+
+[WRITING.md](WRITING.md) is a conditional adapter rather than a fourth workflow. Deep Run carries only the routing rule, so ordinary engineering tasks do not pay for the full writing guide. The adapter requires terminology research in the target language before drafting, separates expert and novice wording, rejects invented translations, defaults English prose to a natural semi-formal B2 level, and treats idiom as occasional native phrasing rather than decoration.
+
+Sources checked 2026-09-11: Shani Raja's [Ninja Writing](https://shaniraja.com/ninja-writing/) describes editing at narrative, paragraph, sentence and word levels; his related material frames simplicity, clarity, elegance and evocativeness as complementary qualities. The current [Пиши, сокращай — 2025](https://bureau.ru/books/pishi/1) presents updated work on structuring thought and removing unnecessary wording. Ilyakhov's *Ясно, понятно*, *Текст по полочкам* and Ilyakhov/Sarycheva's *Новые правила деловой переписки* extend the focus to explanation, context, reader interest and practical communication.
+
+Current Google Search guidance supports the adapter's search boundary: [helpful, reliable, people-first content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content) should lead, while [Search Essentials](https://developers.google.com/search/docs/essentials) and the [SEO Starter Guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide) recommend using the words people actually search for in descriptive locations without requiring every query variant or a fixed word count.
+
+Design consequences:
+
+- editorial principles are applied as transferable checks, never as imitation of a living author's distinctive voice;
+- object/definition/category/purpose/mechanism/relationship/constraint/example coverage is an internal completeness model, not a mandatory heading template;
+- article architecture varies with the reader's task, and nearby project content is checked for repeated openings, headings, FAQs, conclusions and cadence;
+- compression removes dead weight but preserves evidence, examples and necessary nuance;
+- search-facing titles and terminology stay explicit, while keyword stuffing, mass-produced filler and fabricated first-hand experience are prohibited.
+
+The canonical Deep Run remains under its existing 1100-word budget; the new template is 1092 words by the validator's whitespace-counting method. Structural checks still cannot prove that generated prose is natural, useful or search-effective; those outcomes require review on real target content.

@@ -25,6 +25,8 @@ For ChatGPT Deep Run, use [CHATGPT_DEEP_RUN.md](CHATGPT_DEEP_RUN.md); do not imp
 
 For website work, use the selector and applicable sections of [WEBSITE_STACKS.md](WEBSITE_STACKS.md). Automatically resolve the affected workspace, framework/version, router/generator, rendering/export/runtime, host/prefix and real checks from repository evidence. Treat cached map facts as hints and reconcile contradictions against current source/config/workflows. Do not create a prompt copy, ask the user to supply the stack, or migrate it merely to fit a profile.
 
+For publishable articles, guides, explainers, landing-page narrative and substantial copy, use [WRITING.md](WRITING.md). Research target-language terminology before drafting; keep content people-first, natural and semantically explicit rather than templated for SEO.
+
 For repository preparation, use [REPOSITORY_SETUP.md](REPOSITORY_SETUP.md). Normal feature work consumes the existing entry/map; setup is not a mandatory prelude to every task. For model/runtime selection, consult [MODEL_PROFILES.md](MODEL_PROFILES.md). Do not prepend the entire library to a run.
 
 ## Maintaining this library
