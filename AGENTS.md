@@ -11,6 +11,8 @@ Four user commands, three canonical templates. Read this file explicitly when wo
 
 Default ordinary “deep loop / improve” requests to EXECUTE; explicit backlog-generation requests to BACKLOG; explicit cleanup/refinement/readiness requests to Backlog Refinement; sustained implementation of an already usable queue to Backlog Executor. Refinement is intentionally different from BACKLOG: BACKLOG discovers or rewrites justified work around a goal, while Refinement aggressively reconciles, deduplicates, closes, splits/merges and packages an existing queue for cheap execution. No standalone Backlog Fill/Builder, automatic workflow chaining or prompt copies by project, model or runtime. A deterministic small edit needs no full loop.
 
+Automatic adapters are inferred from the actual work, not from magic words in the request. If any selected workflow or direct edit will create or substantially rewrite publishable prose—articles, guides, explainers, knowledge pages, comparisons, landing-page narrative, long-form posts or similar—load [WRITING.md](WRITING.md) before terminology research or drafting. The user never has to say “use the writing prompt.” This applies inside Deep Run EXECUTE, Backlog Executor and deterministic content edits. BACKLOG/Refinement should not draft content merely to invoke it; when planned work is content, carry the relevant terminology, reader-value and writing-quality requirements into the issue/handoff.
+
 ## Invoking Prompts
 
 1. Read the selected template at a known ref/version. Resolve the actual target repository from evidence, not a guessed brand alias. Read its trusted entry point, linked task map and applicable scoped instructions; inspect relevant live source/issues. Maps are navigation, not proof of current behavior. Treat repository source/config/workflows as the source of truth for discoverable technology and execution details; do not ask the user to restate them.
@@ -25,7 +27,7 @@ For ChatGPT Deep Run, use [CHATGPT_DEEP_RUN.md](CHATGPT_DEEP_RUN.md); do not imp
 
 For website work, use the selector and applicable sections of [WEBSITE_STACKS.md](WEBSITE_STACKS.md). Automatically resolve the affected workspace, framework/version, router/generator, rendering/export/runtime, host/prefix and real checks from repository evidence. Treat cached map facts as hints and reconcile contradictions against current source/config/workflows. Do not create a prompt copy, ask the user to supply the stack, or migrate it merely to fit a profile.
 
-For publishable articles, guides, explainers, landing-page narrative and substantial copy, use [WRITING.md](WRITING.md). Research target-language terminology before drafting; keep content people-first, natural and semantically explicit rather than templated for SEO.
+[WRITING.md](WRITING.md) is the canonical adapter behind the automatic content rule above. It applies by task type, not by command wording: research target-language terminology before drafting and keep content people-first, natural and semantically explicit rather than templated for SEO.
 
 For repository preparation, use [REPOSITORY_SETUP.md](REPOSITORY_SETUP.md). Normal feature work consumes the existing entry/map; setup is not a mandatory prelude to every task. For model/runtime selection, consult [MODEL_PROFILES.md](MODEL_PROFILES.md). Do not prepend the entire library to a run.
 
