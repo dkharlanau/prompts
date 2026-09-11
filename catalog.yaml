@@ -1,13 +1,14 @@
 {
-  "library_version": "3.4.2",
+  "library_version": "4.0.0",
   "format_note": "JSON syntax is valid YAML; parsed with the Python standard library.",
-  "canonical_workflows": ["deep-run", "backlog-executor"],
+  "canonical_workflows": ["deep-run", "backlog-refinement", "backlog-executor"],
   "model_profiles": "MODEL_PROFILES.md",
   "model_guidance_checked": "2026-09-10",
   "fields": ["PROJECT", "GOAL", "CONTEXT", "AUTHORITY", "CONSTRAINTS", "DONE_WHEN"],
   "commands": {
     "deep-backlog": {"workflow": "deep-run", "mode": "BACKLOG"},
     "deep-execute": {"workflow": "deep-run", "mode": "EXECUTE"},
+    "backlog-refinement": {"workflow": "backlog-refinement", "mode": null},
     "backlog-executor": {"workflow": "backlog-executor", "mode": null}
   },
   "prompts": [
@@ -17,6 +18,13 @@
       "version": "2.4.2",
       "status": "experimental",
       "max_template_words": 1100
+    },
+    {
+      "id": "backlog-refinement",
+      "path": "loops/backlog-refinement.md",
+      "version": "1.0.0",
+      "status": "experimental",
+      "max_template_words": 1050
     },
     {
       "id": "backlog-executor",
