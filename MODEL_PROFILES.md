@@ -21,13 +21,16 @@ OpenAI currently documents ChatGPT GitHub retrieval as on-demand rather than a g
 
 ## Current Work / Codex environment facts
 
-OpenAI's Work/Codex guidance was updated on **2026-09-10** and materially changes environment selection details relevant to long autonomous runs:
+OpenAI's current Work/Codex guidance materially affects environment selection for long autonomous runs:
 
 - GPT-6 Pro, powered by GPT-6 Astra, is available in ChatGPT for Pro $100, Pro $200, Business and Enterprise; Plus includes GPT-6 Astra in Work and Codex as rollout permits.
 - Astra in Codex requires **Codex CLI 0.153.0 or newer**. The latest ChatGPT Desktop app is also required for current Astra availability in desktop Work/Codex surfaces.
 - Work is designed for longer multi-step work and finished deliverables; Codex remains the software-development surface for repository, terminal, test and debugging work.
 - Work can run in the cloud on web/mobile and in supported desktop configurations. Codex remains a separate desktop experience; supported remote Codex chats can be accessed from mobile, but Codex is not itself selectable on web/mobile.
 - Workspace administrators can set the starting model, reasoning level, speed and Fast Mode availability for Work & Codex independently from ordinary Chat defaults.
+- Work can run one-off, scheduled, or event-triggered cloud tasks. Eligible event-triggered tasks can react to supported **GitHub pull-request activity** in an authorized github.com repository, subject to connected-app permissions, workspace controls and approval requirements.
+
+For this library, scheduled/webhook Work is an orchestration option, not another prompt. It is useful for event-driven review, follow-up, regression checks or backlog/control-plane maintenance around GitHub activity; it does not by itself prove that the task has a checkout, shell, browser or the permissions required for full Backlog Executor implementation. Self-hosted GitHub Enterprise is not supported for these event-triggered GitHub tasks in the current documented flow.
 
 Treat these as environment capabilities, **not** as evidence that Astra is the best configuration for Deep Run or Backlog Executor. Exact model × reasoning × environment choices remain unbenchmarked until compared on authorized real tasks.
 
@@ -64,7 +67,7 @@ Use real subagents only for bounded tasks with clear ownership and integration. 
 
 Conversation compaction, persistence and scheduling depend on the runtime. Deep Run's checkpoint supports evidence-based resumption; it neither schedules work nor guarantees automatic restart. In ChatGPT, prefer durable checkpoints that cost no extra branch/PR overhead: one existing issue comment, an existing state artifact, or commit trailers attached to an already-needed coherent commit.
 
-Managed Agents sessions change the runtime trade-off because the API can preserve session state and recover/compact managed context. That may reduce the value of manual checkpoint scaffolding for API-driven runs, but do not remove workflow checkpoints until real project runs show equivalent or better recovery and traceability.
+Managed Agents sessions change the runtime trade-off because the API can preserve session state and recover/compact managed context. Scheduled/event-triggered Work changes the orchestration trade-off because a follow-up can be invoked by time or supported connected-app events. Neither removes the need for workflow checkpoints, acceptance evidence, or explicit permission boundaries. Do not remove checkpoint scaffolding until real project runs show equivalent or better recovery and traceability.
 
 ## Refresh rule
 
@@ -72,6 +75,7 @@ When official guidance or an actual failure changes the decision: verify the cur
 
 Sources:
 - [Connecting GitHub to ChatGPT](https://help.openai.com/en/articles/11145903)
+- [Scheduled tasks in ChatGPT](https://help.openai.com/en/articles/10291617)
 - [Current model guidance](https://developers.openai.com/api/docs/guides/latest-model)
 - [GPT-6 Astra model](https://developers.openai.com/api/docs/models/gpt-6-astra)
 - [ChatGPT Work and Codex](https://help.openai.com/en/articles/20001275/)
