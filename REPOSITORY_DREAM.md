@@ -1,17 +1,21 @@
 # Repository Dream
 
-Repository Dream is a conditional repository-maintenance adapter for [Deep Run](loops/deep-run.md). It is not a fifth canonical workflow or renderer command. Load it when the task is repository consolidation, safe cleanup, dead-file review, pipeline simplification, repository-map refresh, or reducing the context an agent must load to work safely.
+Repository Dream is the detailed maintenance guide behind the canonical [Repository Dream workflow](loops/repository-dream.md) and the user command `Prompts Repository Dream на <project>`.
 
-Use it with the existing Deep Run execution route. `AUDIT` means read/analyse only inside the run; `EXECUTE` means apply only changes that pass the safety gates below.
+The command is intentionally one-shot by default: **audit first, then apply only defensible repository-maintenance fixes, verify exact revisions, integrate through the repository's normal GitHub path, and verify the final default-branch revision**. An explicit `AUDIT`, `read-only`, `ничего не менять` or equivalent restriction turns the same workflow into analysis-only mode.
 
-Example requests:
+Examples:
 
 ```text
-Prompts Deep Run EXECUTE на <project>. Repository Dream, mode AUDIT: проверь структуру, лишние файлы, pipeline entropy и навигацию для агентов. Ничего не удаляй.
+Prompts Repository Dream на <project>.
 ```
 
 ```text
-Prompts Deep Run EXECUTE на <project>. Repository Dream, mode EXECUTE: безопасно консолидируй репозиторий, обнови карту и удали только доказанно ненужное. Ничего не ломай.
+Prompts Repository Dream на <project>. Проверь структуру, лишние файлы, validation/pipeline entropy и навигацию для агентов; исправь всё безопасное за один проход.
+```
+
+```text
+Prompts Repository Dream на <project>. AUDIT only — ничего не меняй.
 ```
 
 ## Goal
@@ -26,15 +30,15 @@ Treat the repository as a long-lived software and knowledge system that periodic
 - detect structural entropy before it becomes permanent;
 - leave the repository easier to reason about than before.
 
-This is not a "delete as many files as possible" task. Optimize for comprehension cost, maintenance cost, agent navigation speed, architectural coherence, safety, reproducibility and regression resistance. A larger repository with a clear structure is preferable to a smaller repository that lost useful tests, provenance or operational knowledge.
+This is not a "delete as many files as possible" task. Optimize for comprehension cost, maintenance cost, agent navigation speed, architectural coherence, safety, reproducibility and regression resistance. A larger repository with clear ownership is preferable to a smaller repository that lost useful tests, provenance or operational knowledge.
 
 ## Operating cycle
 
 Use:
 
-`OBSERVE -> MAP -> CLASSIFY -> CONSOLIDATE -> PRUNE -> REINDEX -> VERIFY`
+`DISCOVER -> AUDIT -> CLASSIFY -> SAFE EXECUTE -> VERIFY -> INTEGRATE -> VERIFY FINAL REVISION`
 
-Do not begin with deletion.
+Do not begin with deletion and do not stop at a findings report when safe authorized fixes are available.
 
 ## 1. Establish repository truth
 
@@ -46,7 +50,8 @@ Before changing anything:
 - explicitly read applicable `AGENTS.md`, `README.md`, `CONTRIBUTING.md` and linked task map;
 - inspect package/build configuration, CI/workflows and deployment configuration relevant to the task;
 - inspect repository-specific instructions and scoped guidance;
-- determine canonical versus generated sources.
+- determine canonical versus generated sources;
+- inspect branch protection/rulesets when the available GitHub surface can read them.
 
 Do not assume a local checkout or CLI exists. Prefer the connected GitHub toolchain and adapt execution to the capabilities actually available in the current session. Do not waste rounds retrying unavailable CLI tooling.
 
@@ -57,7 +62,7 @@ Maps are navigation, not proof. Current source/config/workflows settle discovera
 Reconstruct the actual repository topology. Identify at minimum:
 
 - canonical source directories;
-- generated directories;
+- generated/mirrored directories;
 - runtime/application code;
 - build/generator/post-processing code;
 - validation/check code;
@@ -67,9 +72,12 @@ Reconstruct the actual repository topology. Identify at minimum:
 - deployment/workflow/configuration files;
 - AI/agent instructions;
 - public assets and integrations;
-- deprecated, archived or migration-only areas.
+- deprecated, archived or migration-only areas;
+- repository-memory surfaces: README, AGENTS, REPO_MAP, roadmap, status/checkpoint docs and live issues.
 
-Look for unusually large files/directories, duplicate or near-duplicate scripts, stale reports, abandoned experiments, obsolete generated artifacts committed to Git, one-off migration/repair scripts, disconnected documentation, checks for removed features, scripts that are never invoked, repeated pipeline stages, overlapping transformations and stale agent instructions.
+Determine which sources may define current priorities. Avoid parallel roadmap systems where README, status docs and historical milestone docs all claim to be "next work".
+
+Look for unusually large or duplicated scripts, stale reports, abandoned experiments, obsolete generated artifacts committed to Git, one-off migration/repair scripts, disconnected documentation, checks for removed features, repeated pipeline stages, overlapping transformations and stale agent instructions.
 
 File age alone is not evidence of obsolescence.
 
@@ -81,12 +89,13 @@ Consider indirect and convention-based dependencies: glob loading, filesystem di
 
 ## 4. Classify before changing
 
-Place candidates into one of these classes:
+Place meaningful candidates into one of these classes:
 
-- `KEEP` — actively needed or provides useful safety/context;
-- `CONSOLIDATE` — useful behavior exists but ownership or implementation is unnecessarily fragmented;
-- `SAFE_DELETE_CANDIDATE` — strong evidence says the artifact is no longer required;
-- `ARCHIVE_CANDIDATE` — operationally unnecessary but historically/evidentially useful;
+- `SAFE_DELETE` — positive evidence proves the artifact is no longer required;
+- `SAFE_CONSOLIDATE` — useful behavior remains but ownership/implementation is unnecessarily fragmented;
+- `SAFE_REWRITE` — navigation/docs/metadata can be corrected without changing product semantics;
+- `KEEP` — actively needed or useful safety/context;
+- `HISTORICAL` — useful provenance that must no longer appear to define current priorities;
 - `UNKNOWN` — evidence is insufficient.
 
 `UNKNOWN` means KEEP.
@@ -95,35 +104,37 @@ Place candidates into one of these classes:
 
 Tests, checks, fixtures, schemas and validation code are safety infrastructure. Never delete them merely because they are large, old, similar to another test or absent from the default context.
 
-A test/check becomes a deletion candidate only when the protected behavior itself is proven removed or superseded and equivalent protection exists elsewhere. Prefer reorganizing or documenting useful coverage over deleting it.
+A test/check becomes a deletion candidate only when the protected behavior itself is proven removed or exactly superseded and equivalent protection exists elsewhere. Prefer reorganizing or documenting useful coverage over deleting it.
 
-Apply an especially high deletion threshold to schemas, migrations, lock files, CI/deploy/security files, licences, citation/provenance records, canonical datasets, public compatibility contracts, localization source-of-truth data and reproducibility material.
+Apply an especially high deletion threshold to schemas, migrations, lock files, CI/deploy/security files, licences, citation/provenance records, canonical datasets, public compatibility contracts, localization source-of-truth data, research, benchmark evidence and reproducibility material.
 
 Do not rewrite Git history as part of Repository Dream. History compaction is a separate destructive operation requiring explicit authorization. Deleting a file from current HEAD does not remove it from historical repository size.
 
 ## 6. Safe deletion gate
 
-In EXECUTE mode, delete only with positive evidence. Require all applicable conditions:
+Delete only with positive evidence. Require all applicable conditions:
 
 1. no active dependency requires the artifact;
 2. no build, CI or deployment path requires it;
-3. no public interface depends on it;
-4. no useful validation coverage is lost;
-5. it is reproducible, obsolete, superseded or genuinely unreachable;
-6. baseline behavior is known;
-7. post-change verification can demonstrate equivalent or better behavior.
+3. no package/export/public interface depends on it;
+4. no migration or compatibility contract depends on it;
+5. no useful validation, provenance or historical evidence is lost;
+6. it is reproducible, obsolete, superseded or genuinely unreachable;
+7. baseline behavior is known;
+8. post-change verification can demonstrate equivalent or better behavior.
 
 If an applicable condition cannot be established, keep the artifact. Do not delete to improve file-count metrics.
 
-## 7. Detect architectural entropy
+## 7. Detect architectural and validation entropy
 
 Do not limit the pass to dead files. Look for complexity created by repeated incremental fixes, especially:
 
 - the same postprocessor running several times;
 - generators that repair output from earlier generators;
 - `finalize`, `repair`, `ensure` and `reconcile` layers stacking indefinitely;
-- long serial build commands;
-- overlapping checks;
+- giant serial validation commands;
+- deterministic command lists duplicated between package scripts and CI;
+- overlapping checks whose ownership is unclear;
 - scripts whose order is critical but undocumented;
 - one new script for every isolated fix;
 - repeated output mutation long after canonical generation;
@@ -131,51 +142,48 @@ Do not limit the pass to dead files. Look for complexity created by repeated inc
 
 Before removing a repeated stage, determine why it repeats. It may compensate for later-generated output. Preserve behavior first; simplify phase ordering only after proving equivalence.
 
-Prefer a comprehensible flow such as:
+When consolidating validation, inventory the old command set and order first. Prefer an inspectable canonical validation contract plus a lightweight self-test/fingerprint or equivalent drift guard. Keep live/network/security/environment-specific boundaries explicit in CI: external SDK installation, credentials, live-site dogfood, deployment checks, reusable Actions and release/publication gates should not disappear into a generic runner merely to make YAML shorter.
 
-`canonical source -> generation -> bounded post-processing -> final reconciliation -> validation`
-
-Do not merge files merely to lower file count. One giant coupled file is not an improvement. Optimize conceptual boundaries.
+Do not merge workflows merely because there are many. Compare triggers, path filters, permissions, secrets, environments, concurrency, artifacts and publication side effects before claiming equivalence.
 
 ## 8. Refresh repository memory
 
 The repository should route a new agent from "I have a task" to "these are the few sources/checks I need" quickly.
 
-Prefer a small navigation hierarchy when it fits the target:
+Prefer a small hierarchy when it fits the target:
 
 - `README.md` — product/human entry point;
 - `AGENTS.md` — compact agent rules and task router;
 - `REPO_MAP.md` or existing equivalent — current architecture/navigation map;
-- domain documentation — loaded only when relevant.
+- roadmap + live issues — current priorities;
+- domain documentation — loaded only when relevant;
+- historical milestone docs — provenance, clearly marked historical.
 
 Do not create `REPO_MAP.md` when an equivalent canonical map already exists; improve that source instead. Avoid documentation duplication.
 
-A compact repository map should cover product boundary, canonical sources, meaningful directory map, task router, build phases, generated surfaces, validation, deployment, danger zones and intentional legacy/deprecated boundaries. It should not dump every file.
+A compact map should use task-oriented routing such as:
 
-Optimize for selective context loading: source of truth quickly identifiable, generated output avoided, whole-corpus reads unnecessary, checks selected by task and dangerous cross-cutting surfaces visible.
+`task -> canonical source -> coupled surface -> focused verification`
 
-Where justified, add a lightweight deterministic staleness check for map paths/commands. Do not build a maintenance framework heavier than the problem. Prefer structural validation over timestamp-only or commit-SHA-only churn.
+Where justified, add a lightweight deterministic memory check for required paths, repository-relative links, ignored local-output paths and workstation-specific absolute paths. Do not build a maintenance framework heavier than the problem.
 
-## 9. Baseline and change strategy
+## 9. Change strategy
 
-Before risky structural work, establish the strongest available baseline using the target repository's own verification contract: build, tests, checks, lint, schemas, artifact generation, sitemap/localization validation or other applicable gates.
+Before risky structural work, establish the strongest available baseline using the target repository's own verification contract. Record what already fails. Do not attribute pre-existing failures to cleanup.
 
-Record what already fails. Do not attribute pre-existing failures to cleanup.
+Separate risk when useful:
 
-Keep changes reviewable and conceptually separated when risk warrants it:
-
-1. navigation/memory refresh;
-2. proven-safe dead-file cleanup;
-3. structural consolidation;
-4. staleness/validation protection.
+1. navigation/memory refresh and proven residue cleanup;
+2. validation/pipeline consolidation;
+3. workflow consolidation only when strong evidence supports it.
 
 Do not mix unrelated product features into Repository Dream. Never weaken validation merely to make cleanup pass.
 
-Use [GITHUB_WORKFLOW.md](GITHUB_WORKFLOW.md) for publication, concurrency, exact-SHA verification and resume rules. Respect explicit no-push/no-merge/no-deploy boundaries separately.
+For structural maintenance prefer branch/PR-first delivery unless repository instructions prove a simpler route is safer. Use [GITHUB_WORKFLOW.md](GITHUB_WORKFLOW.md) for concurrency, publication, exact-SHA verification and resume rules. Respect explicit no-push/no-merge/no-deploy boundaries separately.
 
-## 10. Verify behavioral equivalence
+## 10. Verify exact revisions
 
-After changes, rerun the relevant baseline. For generated/public projects compare where applicable:
+After changes, rerun the relevant baseline and focused checks. For generated/public projects compare where applicable:
 
 - generated page/artifact counts;
 - public route set;
@@ -185,26 +193,42 @@ After changes, rerun the relevant baseline. For generated/public projects compar
 - important metadata;
 - build output and deployment configuration.
 
-A successful cleanup should reduce internal complexity without unintentionally changing product behavior. Any intended behavior change must be called out explicitly.
+Before integration, verify the exact PR/candidate head SHA. After integration, resolve the exact final default-branch SHA and verify push/default-branch checks again. Green CI on another SHA is not evidence.
 
-## 11. Output
+If public/generated surfaces changed, verify deployment/publication separately. A green repository build does not prove live parity.
 
-Finish with an evidence-based report covering:
+If `main` protection is materially missing and the session cannot change repository administration, create a concrete issue with desired settings and objective closure criteria. Do not simulate branch protection with docs or CI conventions.
 
+## 11. Stop conditions and output
+
+Stop when every actionable finding is one of:
+
+1. fixed and independently verified;
+2. intentionally preserved with evidence;
+3. classified UNKNOWN and therefore left untouched;
+4. blocked by external/admin access and recorded with a concrete next verification step.
+
+Do not continue deleting merely to produce more changes.
+
+Finish with an evidence-based closure report covering:
+
+- previous and final default-branch SHA;
+- PR/commit links;
 - repository health and dominant structural risks;
-- navigation quality and context-loading improvements;
+- navigation/context-loading improvements;
 - important files intentionally kept despite appearing removable;
 - deleted items and evidence for each deletion;
-- consolidated implementation/pipeline areas;
+- consolidated validation/pipeline areas;
 - repository-memory changes;
-- exact verification performed and exact revision verified;
-- useful before/after measures where available: tracked files, relevant script count, duplicated pipeline stages, working-tree size, agent entry-point complexity or build/check complexity;
-- remaining uncertainty deliberately kept because evidence was insufficient.
+- exact PR/candidate and final-revision verification;
+- tests/schemas/fixtures/runtime/publication behavior affected or explicitly unchanged;
+- deployment/public verification where applicable;
+- remaining real debt only.
 
-Do not optimize these metrics blindly. Distinguish changed, verified, integrated, deployed and measured impact.
+Distinguish changed, verified, integrated, deployed and measured impact.
 
 ## Success criteria
 
-Repository Dream succeeds when a new agent can understand the project faster; canonical sources are easier to locate; irrelevant context loading decreases; duplicated or obsolete machinery decreases; valuable tests and evidence remain; generated artifacts are not mistaken for source; repository instructions match current reality; build/deploy behavior is preserved; every deletion is defensible; and future structural drift is easier to detect.
+Repository Dream succeeds when a new agent can understand the project faster; canonical sources are easier to locate; irrelevant context loading decreases; duplicated or obsolete machinery decreases; useful history/evidence remains; generated artifacts are not mistaken for source; repository instructions match current reality; validation ownership is clearer; build/deploy behavior is preserved; every deletion is defensible; exact final revision checks are green; and future structural drift is harder to reintroduce.
 
 Safety and comprehension have priority over file-count reduction.

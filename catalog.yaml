@@ -1,13 +1,14 @@
 {
-  "library_version": "4.1.2",
+  "library_version": "4.2.0",
   "format_note": "JSON syntax is valid YAML; parsed with the Python standard library.",
-  "canonical_workflows": ["deep-run", "backlog-refinement", "backlog-executor"],
+  "canonical_workflows": ["deep-run", "repository-dream", "backlog-refinement", "backlog-executor"],
   "model_profiles": "MODEL_PROFILES.md",
   "model_guidance_checked": "2026-09-12",
   "fields": ["PROJECT", "GOAL", "CONTEXT", "AUTHORITY", "CONSTRAINTS", "DONE_WHEN"],
   "commands": {
     "deep-backlog": {"workflow": "deep-run", "mode": "BACKLOG"},
     "deep-execute": {"workflow": "deep-run", "mode": "EXECUTE"},
+    "repository-dream": {"workflow": "repository-dream", "mode": null},
     "backlog-refinement": {"workflow": "backlog-refinement", "mode": null},
     "backlog-executor": {"workflow": "backlog-executor", "mode": null}
   },
@@ -18,6 +19,13 @@
       "version": "2.5.0",
       "status": "experimental",
       "max_template_words": 1100
+    },
+    {
+      "id": "repository-dream",
+      "path": "loops/repository-dream.md",
+      "version": "1.0.0",
+      "status": "experimental",
+      "max_template_words": 1300
     },
     {
       "id": "backlog-refinement",

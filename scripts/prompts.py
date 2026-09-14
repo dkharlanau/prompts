@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate and render the four supported commands; no network, model calls or writes."""
+"""Validate and render the five supported commands; no network, model calls or writes."""
 from __future__ import annotations
 
 import argparse
@@ -13,6 +13,7 @@ FIELDS = {"PROJECT", "GOAL", "CONTEXT", "AUTHORITY", "CONSTRAINTS", "DONE_WHEN"}
 ROUTES = {
     "deep-backlog": {"workflow": "deep-run", "mode": "BACKLOG"},
     "deep-execute": {"workflow": "deep-run", "mode": "EXECUTE"},
+    "repository-dream": {"workflow": "repository-dream", "mode": None},
     "backlog-refinement": {"workflow": "backlog-refinement", "mode": None},
     "backlog-executor": {"workflow": "backlog-executor", "mode": None},
 }
@@ -43,7 +44,7 @@ def catalog(root: Path = ROOT) -> dict:
     if set(data.get("fields", [])) != FIELDS or len(data["fields"]) != len(FIELDS):
         raise ValueError("Catalog input fields do not match the six-field contract")
     entries = data.get("prompts", [])
-    expected_ids = ["deep-run", "backlog-refinement", "backlog-executor"]
+    expected_ids = ["deep-run", "repository-dream", "backlog-refinement", "backlog-executor"]
     if [x.get("id") for x in entries] != expected_ids:
         raise ValueError("Canonical workflow entries are missing, duplicated or out of order")
     if data.get("canonical_workflows") != expected_ids:
