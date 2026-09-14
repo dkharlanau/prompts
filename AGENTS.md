@@ -29,7 +29,7 @@ For website work, use the selector and applicable sections of [WEBSITE_STACKS.md
 
 [WRITING.md](WRITING.md) is the canonical adapter behind the automatic content rule above. It applies by task type, not by command wording: research target-language terminology before drafting and keep content people-first, natural and semantically explicit rather than templated for SEO.
 
-For repository preparation, use [REPOSITORY_SETUP.md](REPOSITORY_SETUP.md). Normal feature work consumes the existing entry/map; setup is not a mandatory prelude to every task. For model/runtime selection, consult [MODEL_PROFILES.md](MODEL_PROFILES.md). Do not prepend the entire library to a run.
+For repository preparation, use [REPOSITORY_SETUP.md](REPOSITORY_SETUP.md). Normal feature work consumes the existing entry/map; setup is not a mandatory prelude to every task. For repository consolidation, dead-file review, pipeline simplification, safe pruning or repository-memory/map refresh, load [REPOSITORY_DREAM.md](REPOSITORY_DREAM.md) as a conditional adapter to Deep Run EXECUTE. Treat deletion authority separately and keep uncertain candidates. For model/runtime selection, consult [MODEL_PROFILES.md](MODEL_PROFILES.md). Do not prepend the entire library to a run.
 
 ## Maintaining this library
 
