@@ -1,11 +1,12 @@
 # Prompts
 
-Four commands for real development through ChatGPT or Codex. Three maintained canonical templates, no collection of near-duplicates.
+Five commands for real development through ChatGPT or Codex. Four maintained canonical templates, no collection of near-duplicates.
 
 | Command | Job | Durable result |
 |---|---|---|
 | **Deep Run BACKLOG** | Discover and formulate justified work | Clean, prioritized issues an executor can use without the original chat |
 | **Deep Run EXECUTE** | Find the best justified improvement and make it | Changed artifacts with verification and an honest completion status |
+| **Repository Dream** | Audit repository entropy and safely fix what can be proven | Cleaner repository structure, clearer agent navigation and verified maintenance changes |
 | **Backlog Refinement** | Reduce and normalize an accumulated queue | Deduplicated, ordered, executor-ready issues with explicit blockers/decisions |
 | **Backlog Executor** | Work through an existing usable queue | Implemented, reviewed work; accurate issues; continued progress past unrelated blockers |
 
@@ -20,6 +21,10 @@ Prompts Deep Run EXECUTE на <project>. Работай глубоко.
 ```
 
 ```text
+Prompts Repository Dream на <project>.
+```
+
+```text
 Prompts Backlog Refinement на <project>. Подготовь backlog для эффективной работы Codex/агента.
 ```
 
@@ -29,9 +34,23 @@ Prompts Backlog Executor на <project>. Разбирай весь actionable ba
 
 The assistant reads this repository, resolves the actual project, fills context and constraints, then executes. You do not need to fill six fields yourself or remember the project's technology stack. When repository evidence can establish the framework, version, router/generator, rendering/runtime mode, package tooling, host and real checks, the assistant derives them automatically instead of asking you to restate them. Existing no-push, branch and deployment restrictions remain in force. Specifying a model or environment requests that configuration; text cannot switch the active model or start an unavailable agent.
 
-Use **BACKLOG** when the goal is to discover/create justified work. Use **Refinement** after the queue has accumulated and should become smaller, clearer and cheaper to execute. Use **Executor** once READY work already exists. Use **EXECUTE** when direction is uncertain and product changes are wanted now. Do not chain workflows automatically or use a deep loop for a one-line deterministic fix.
+Use **BACKLOG** when the goal is to discover/create justified work. Use **Repository Dream** when the repository itself needs an audit plus safe cleanup/consolidation/navigation/validation maintenance in one pass. Repository Dream defaults to audit + safe execution; say `AUDIT only` or `ничего не менять` when you want findings without writes. Use **Refinement** after the queue has accumulated and should become smaller, clearer and cheaper to execute. Use **Executor** once READY work already exists. Use **EXECUTE** when direction is uncertain and product changes are wanted now. Do not chain workflows automatically or use a deep loop for a one-line deterministic fix.
 
 Backlog Refinement deliberately optimizes for context economy. It reconciles issues with current code/PRs, closes supported duplicates/obsolete/already-satisfied work, separates blockers and decisions, splits or merges badly sized items, orders the remaining queue, and rewrites READY issues as compact execution packets. It does not close by age alone and does not require a large label taxonomy.
+
+## Repository Dream
+
+[Repository Dream](loops/repository-dream.md) is the canonical one-shot repository-maintenance workflow. It reconstructs the actual current repository first, then audits canonical/generated ownership, dead/local residue, stale repository memory, validation/pipeline duplication, workflow entropy and agent navigation before changing anything.
+
+The default command is intentionally short:
+
+```text
+Prompts Repository Dream на <project>.
+```
+
+That means: audit first, apply only defensible repository-maintenance fixes, use the repository's normal safe GitHub delivery path, verify the exact candidate/PR revision, integrate when authorized, then verify the exact final default-branch revision again. Deployment/release authority is separate. Unknown deletion candidates are kept.
+
+The detailed safety model is in [REPOSITORY_DREAM.md](REPOSITORY_DREAM.md). It protects tests, schemas, fixtures, research, provenance, benchmark evidence and public/generated compatibility surfaces by default. It also treats validation orchestration as a separate higher-risk maintenance area: preserve exact coverage before centralizing giant command chains, and keep external/live/security boundaries visible.
 
 ## Prepare the repository, not just the prompt
 
@@ -85,13 +104,13 @@ The guide routes a change through its source/data/template/checks, preserves gen
 
 ## Templates
 
-[Deep Run](loops/deep-run.md), [Backlog Refinement](loops/backlog-refinement.md) and [Backlog Executor](loops/backlog-executor.md) are self-contained once filled. The agent entry point is [AGENTS.md](AGENTS.md).
+[Deep Run](loops/deep-run.md), [Repository Dream](loops/repository-dream.md), [Backlog Refinement](loops/backlog-refinement.md) and [Backlog Executor](loops/backlog-executor.md) are self-contained once filled. The agent entry point is [AGENTS.md](AGENTS.md).
 
 The templates retain deep diagnosis, alternative hypotheses, skeptical review, experiments and iteration where they affect the decision. They require real capability checks, preserve concurrent work and distinguish a branch fix from merged code, deployment and measured impact. A simulated user is not customer research; a green build is not proof of a useful product.
 
 ## GitHub working defaults
 
-**Main-first, not main-at-any-cost.** When implementation publication is authorized, prefer small verified batches on the actual default branch. Keep explicit branch/no-push/no-deploy restrictions and protection intact. Reuse a permitted work branch when necessary; do not create one per microtask.
+**Main-first, not main-at-any-cost.** When implementation publication is authorized, prefer small verified batches on the actual default branch. Keep explicit branch/no-push/no-deploy restrictions and protection intact. Reuse a permitted work branch when necessary; do not create one per microtask. Repository Dream is more conservative for structural maintenance and normally prefers branch/PR-first delivery unless target instructions establish a safer simpler route.
 
 **One coherent change, one publication.** Prefer atomic multi-file commits over one commit per file. Check for concurrent changes and read back writes. After a timeout, establish whether the operation already succeeded before retrying.
 
@@ -119,6 +138,7 @@ Python 3.10+, standard library only. The agent supplies a UTF-8 JSON run specifi
 ```sh
 python3 scripts/prompts.py render deep-execute --spec /tmp/run.json
 python3 scripts/prompts.py render deep-backlog --spec /tmp/run.json
+python3 scripts/prompts.py render repository-dream --spec /tmp/run.json
 python3 scripts/prompts.py render backlog-refinement --spec /tmp/run.json
 python3 scripts/prompts.py render backlog-executor --spec /tmp/run.json
 python3 scripts/prompts.py check
@@ -130,4 +150,4 @@ Use `--spec -` for standard input. Rendering writes only prompt text to standard
 
 [MODEL_PROFILES.md](MODEL_PROFILES.md) separates environment capabilities from model choices. [RESEARCH.md](RESEARCH.md) records source-to-design decisions. Keep the repository project-neutral: do not add target-project datasets, fixtures, benchmark cases or generated run prompts containing private project context.
 
-Keep the four commands separated by job. Add another workflow only after repeated real use demonstrates a distinct outcome that cannot fit Deep Run, Refinement or Executor.
+Keep the five commands separated by job. Add another workflow only after repeated real use demonstrates a distinct outcome that cannot fit Deep Run, Repository Dream, Refinement or Executor.
