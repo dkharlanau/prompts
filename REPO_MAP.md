@@ -14,10 +14,11 @@ Repository: `dkharlanau/prompts`. Read [AGENTS.md](AGENTS.md) for instructions. 
 | Adapt website work to its stack | [Website adapter](WEBSITE_STACKS.md), [Deep Run](loops/deep-run.md), [setup guide](REPOSITORY_SETUP.md) | Preserve framework/rendering/host boundaries; load only relevant guidance; check links and prompt budget; website behavior checks belong in the target |
 | Write or substantially edit publishable prose | [Writing adapter](WRITING.md), [Deep Run](loops/deep-run.md) | Research target-language terminology first; preserve project voice; use people-first semantic coverage without keyword stuffing or fixed article templates |
 | Prepare a target repository | [Repository setup guide](REPOSITORY_SETUP.md) | Reuse the target's conventions; apply only within its authority; no mass rollout or site fixtures here |
+| Consolidate/prune a repository or refresh repository memory | [Repository Dream](REPOSITORY_DREAM.md), [Deep Run](loops/deep-run.md), target entry/map | Preserve tests/evidence, reconstruct dependencies before deletion, classify uncertainty as KEEP, refresh navigation and verify behavioral equivalence; use [GitHub protocol](GITHUB_WORKFLOW.md) for publication |
 | Change validation/CI | [Validator](scripts/prompts.py), [workflow](.github/workflows/prompts-check.yml) | Local check plus appropriate negative cases; inspect exact-revision CI and logs; YAML syntax alone does not prove execution |
 | Refresh source rationale/model guidance | [Research](RESEARCH.md), [profiles](MODEL_PROFILES.md) | Verify current primary sources; do not invent model rankings or measured gains |
 
-The three `loops/*.md` files are the canonical copyable prompts. `catalog.yaml` is JSON-compatible YAML with routes, versions, fields and budgets. `scripts/prompts.py` validates and renders; rendered prompts are transient output, not another source to edit. Keep private run specifications outside this public repository. This library has no generated website or target-product dataset to maintain.
+The three `loops/*.md` files are the canonical copyable prompts. `catalog.yaml` is JSON-compatible YAML with routes, versions, fields and budgets. `scripts/prompts.py` validates and renders; rendered prompts are transient output, not another source to edit. [REPOSITORY_DREAM.md](REPOSITORY_DREAM.md) is a conditional Deep Run adapter, not a fourth canonical loop or CLI route. Keep private run specifications outside this public repository. This library has no generated website or target-product dataset to maintain.
 
 ## Verification and side effects
 
